@@ -1,0 +1,14 @@
+{
+  "name": "shop-restful-api",
+  "version": "1.0.0",
+  "description": "Shop RESTful API Node.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chinasa Agu Kalu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
