@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
-const productRoutes = require('./api/routes/products');
+const productRoutes = require('./api/routes/productsRoute');
 const orderRoutes = require('./api/routes/orders');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./api/controllers/errorController');
+
+app.use(express.json({ limit: '10kb' }));
 
 app.use(morgan('dev'));
 app.use(cors());
