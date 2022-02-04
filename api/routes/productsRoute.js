@@ -3,27 +3,11 @@ const express = require('express');
 const router = express.Router();
 
 const productsController = require('../controllers/productsController');
-const { allProducts, createProduct } = productsController;
+const { allProducts, createProduct, getProduct } = productsController;
 
 router.route('/').get(allProducts).post(createProduct);
 
-// router.get('/:productId', (req, res, next) => {
-//   const id = req.params.productId;
-//   if (id === 'special') {
-//     res.status(200).json({
-//       message: 'You passed a special Id',
-//       id: id,
-//     });
-//   } else {
-//     res.status(200).json({
-//       message: 'pass in an id',
-//       id: id,
-//     });
-//   }
-//   res.status(200).json({
-//     message: 'Get a single product',
-//   });
-// });
+router.get('/:productId', getProduct);
 
 // router.patch('/:productId', (req, res, next) => {
 //   res.status(200).json({
