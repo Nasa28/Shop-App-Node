@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
 const productRoutes = require('./api/routes/productsRoute');
-const orderRoutes = require('./api/routes/orders');
+const orderRoutes = require('./api/routes/ordersRoute');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./api/controllers/errorController');
 

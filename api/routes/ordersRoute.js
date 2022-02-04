@@ -1,12 +1,10 @@
 const express = require('express');
-
+const orderController = require('../controllers/ordersController');
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  res.status(200).json({
-    message: 'Get all orders',
-  });
-});
+const { allOrder } = orderController;
+
+router.get('/', allOrder);
 
 router.post('/', (req, res, next) => {
   res.status(201).json({
