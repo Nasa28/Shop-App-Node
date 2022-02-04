@@ -25,13 +25,30 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.getProduct = catchAsync(async (req, res, next) => {
-  const product = await Product.findById(req.params.productId).select('-__v');
+  const product = await Product.findById(req.params.id).select('-__v');
   if (!product) {
     return next(new AppError(`No product found with id ${req.params.id}`, 404));
   }
 
   res.status(200).json({
     status: 'Success',
+    data: {
+      product,
+    },
+  });
+});
+
+exports.updateProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!product) {
+    return next(new AppError(`No product found with id ${req.params.id}`, 404));
+  }
+
+  res.status(200).json({
+    status: 'Updated',
     data: {
       product,
     },
