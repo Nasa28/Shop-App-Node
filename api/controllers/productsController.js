@@ -6,7 +6,7 @@ exports.allProducts = catchAsync(async (req, res, next) => {
   const products = await Product.find().select('-__v');
 
   res.status(200).json({
-    result: products.length,
+    count: products.length,
     status: 'Success',
     data: {
       products,

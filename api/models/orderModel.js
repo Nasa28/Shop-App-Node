@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.ObjectId,
     ref: 'Product',
-    required: [true, 'Order must belong to a tour'],
+    required: [true, 'Order must belong to a Product'],
   },
 });
 
