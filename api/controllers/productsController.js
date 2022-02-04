@@ -54,3 +54,16 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
+
+  if (!product) {
+    return next(
+      new AppError(`Product with id ${req.params.id} does not exist`, 404),
+    );
+  }
+  res.status(201).json({
+    status: 'Product deleted',
+  });
+});
