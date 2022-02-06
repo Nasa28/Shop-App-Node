@@ -5,12 +5,7 @@ const router = express.Router();
 const { allOrder, getOrder, createOrder, updateOrder, deleteOrder } =
   orderController;
 
-router.get('/', allOrder);
-
-router.post('/', createOrder);
-
-router.get('/:id', getOrder);
-router.patch('/:id', updateOrder);
-router.delete('/:id', deleteOrder);
+router.route('/').get(allOrder).post(createOrder);
+router.route('/:id').get(getOrder).patch(updateOrder).delete(deleteOrder);
 
 module.exports = router;

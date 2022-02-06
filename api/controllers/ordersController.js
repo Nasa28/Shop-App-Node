@@ -4,7 +4,7 @@ const catchAsync = require('../../utils/catchError');
 const AppError = require('../../utils/AppError');
 
 exports.allOrder = catchAsync(async (req, res, next) => {
-  const orders = await Order.find();
+  const orders = await Order.find().select('-__v').populate('product', 'name');
 
   res.status(200).json({
     count: orders.length,
@@ -16,7 +16,7 @@ exports.allOrder = catchAsync(async (req, res, next) => {
 });
 
 exports.getOrder = catchAsync(async (req, res, next) => {
-  const order = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id).populate('product');;
 
   if (!order) {
     return next(new AppError('This order does not exist', 404));
