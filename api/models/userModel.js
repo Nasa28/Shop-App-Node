@@ -10,14 +10,6 @@ const userSchema = new mongoose.Schema({
     required: [true, 'User must have a name'],
   },
 
-  userName: {
-    type: String,
-    required: [true, 'User must have a name'],
-    minlength: [4, 'Username must not be less than 4 character'],
-    maxlength: [12, 'Username must not be more than 12 characters'],
-    // unique: true,
-  },
-
   email: {
     type: String,
     required: [true, 'User must have an email address'],
@@ -37,7 +29,7 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 
-  passwordComfirm: {
+  passwordConfirm: {
     type: String,
     required: [true, 'Please, enter your  password'],
     validate: {
@@ -59,3 +51,5 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+module.exports = User;

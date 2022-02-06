@@ -4,16 +4,21 @@ const app = express();
 const morgan = require('morgan');
 const productRoutes = require('./api/routes/productsRoute');
 const orderRoutes = require('./api/routes/ordersRoute');
+const userRoutes = require('./api/routes/usersRoute');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./api/controllers/errorController');
 
 app.use(express.json({ limit: '10kb' }));
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 app.use(cors());
 app.use('/api/v1/products', productRoutes);
 
 app.use('/api/v1/orders', orderRoutes);
+
+app.use('/api/v1/users', userRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find this ${req.originalUrl} on this server`, 400));
