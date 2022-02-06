@@ -17,6 +17,14 @@ const orderSchema = new mongoose.Schema({
   },
 });
 
+
+orderSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'product',
+    select: '-__v'
+  });
+  next();
+});
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;

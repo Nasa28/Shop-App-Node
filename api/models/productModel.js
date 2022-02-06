@@ -35,6 +35,11 @@ productSchema.pre('save', function (next) {
   this.slug = slugify(this.name + Math.random(50), { lower: true });
   next();
 });
+
+productSchema.pre(/^find/, function (next) {
+  this.select('-__v');
+  next();
+});
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;

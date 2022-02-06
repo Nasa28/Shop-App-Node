@@ -16,11 +16,15 @@ exports.allOrder = catchAsync(async (req, res, next) => {
 });
 
 exports.getOrder = catchAsync(async (req, res, next) => {
-  const order = await Order.findById(req.params.id).populate('product');;
+  const order = await Order.findById(req.params.id)
+    .populate('product')
+    .select('-__v');
 
   if (!order) {
     return next(new AppError('This order does not exist', 404));
   }
+
+  order.__v = undefined;
   res.status(200).json({
     status: 'Success',
     data: {
