@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../../utils/catchError');
 const AppError = require('../../utils/AppError');
-const { cookie } = require('express/lib/response');
-const { request } = require('https');
 // const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
@@ -46,4 +44,19 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
   sendTokens(newUser, res, 201);
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new AppError('Please enter your email and password', 400));
+  }
+
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user || !(await user.comparePassword(password, user.password))) {
+    return next(new AppError('Invalid Email or Password', 401));
+  }
+
+  sendTokens(user, res, 201);
 });

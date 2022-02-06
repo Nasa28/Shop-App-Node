@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -49,6 +51,26 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
+
+// HASH OR ENCRYPT PASSWORD MIDDLEWARE
+
+userSchema.pre('save', async function (next) {
+  //run function if password was modified
+  if (!this.isModified('password')) return next();
+  // Hash password
+  this.password = await bcrypt.hash(this.password, 12);
+
+  //delete the passwordComfirm field in the data base
+  this.passwordConfirm = undefined;
+});
+
+// Compare user inputed password and correct password
+userSchema.methods.comparePassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
