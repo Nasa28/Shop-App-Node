@@ -12,6 +12,7 @@ const {
   resetPassword,
   protectRoutes,
   updatePassword,
+  restrictTo,
 } = authController;
 
 const router = express.Router();
@@ -27,6 +28,10 @@ router.delete('/deleteMe', protectRoutes, deleteMe);
 
 router.patch('/updateMe', protectRoutes, updateMe);
 router.get('/', getUsers);
-router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router
+  .route('/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(protectRoutes, restrictTo('admin'), deleteUser);
 
 module.exports = router;

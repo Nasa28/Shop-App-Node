@@ -80,9 +80,10 @@ exports.updateUser = (req, res) => {
   });
 };
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This has not been implemented',
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.status(204).json({
+    status: 'sucess',
+    data: null,
   });
-};
+});
