@@ -15,6 +15,12 @@ const orderSchema = new mongoose.Schema({
     ref: 'Product',
     required: [true, 'Order must belong to a Product'],
   },
+
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: [true, 'User must belong to a Product'],
+  },
 });
 
 

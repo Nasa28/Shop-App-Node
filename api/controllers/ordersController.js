@@ -17,7 +17,7 @@ exports.allOrder = catchAsync(async (req, res, next) => {
 
 exports.getOrder = catchAsync(async (req, res, next) => {
   const order = await Order.findById(req.params.id)
-    .populate('product')
+    .populate('product user')
     .select('-__v');
 
   if (!order) {
@@ -34,6 +34,9 @@ exports.getOrder = catchAsync(async (req, res, next) => {
 });
 
 exports.createOrder = catchAsync(async (req, res, next) => {
+
+if (!req.body.product) req.body.product = req.user.id;
+  if (!req.body.user) req.body.user = req.user.id;
   const newOrder = await Order.create(req.body);
 
   res.status(200).json({
