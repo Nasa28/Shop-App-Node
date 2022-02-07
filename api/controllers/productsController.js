@@ -1,9 +1,14 @@
+const fs = require('fs');
 const Product = require('../models/productModel');
 const catchAsync = require('../../utils/catchError');
 const AppError = require('../../utils/AppError');
+const upload = require('../../utils/multer');
+const cloudinary = require('../../utils/cloud');
+
+exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = catchAsync(async (req, res, next) => {
-  const products = await Product.find()
+  const products = await Product.find();
 
   res.status(200).json({
     count: products.length,
@@ -15,7 +20,19 @@ exports.allProducts = catchAsync(async (req, res, next) => {
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
+  const uploader = async (path) => await cloudinary.uploads(path, 'Images');
+  const urls = [];
+  const files = req.files;
+  for (const file of files) {
+    const { path } = file;
+    const newPath = await uploader(path);
+    urls.push(newPath.url);
+    fs.unlinkSync(path);
+  }
+  if (req.files) req.body.images = urls;
+
   const newProduct = await Product.create(req.body);
+  newProduct.__v = undefined;
   res.status(200).json({
     status: 'Created',
     data: {
@@ -45,7 +62,6 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   if (!product) {
     return next(new AppError(`No product found with id ${req.params.id}`, 404));
   }
-
   res.status(200).json({
     status: 'Updated',
     data: {
