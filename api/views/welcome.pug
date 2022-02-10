@@ -1,0 +1,18 @@
+extends baseEmailTemplate
+
+block content 
+
+  p Hi #{firstName},
+    p Welcome to Mayata Shop, we're glad to have you 🎉🙏
+    p We're all a big familiy here, Sincerity is our watch word. Happy buying and selling!
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tbody
+        tr
+          td(align='left')
+            table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+              tbody
+                tr
+                  td
+                    a(href=`${url}`, target='_blank') Go to market place!
+    p If you need any help with booking your next making your order, please don't hesitate to contact me!
+  p - Chinasa Agu Kalu, CEO
