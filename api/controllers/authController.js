@@ -45,10 +45,9 @@ exports.signUp = catchAsync(async (req, res, next) => {
   });
 
   const url = `${req.protocol}://${req.get('host')}/api/v1/products`;
-  console.log(url);
 
   await new Email(newUser, url).sendWelcome();
-  newUser.active = undefined
+  newUser.active = undefined;
   sendTokens(newUser, res, 201);
 });
 
@@ -127,17 +126,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
   // 3) Send it to the users email
 
-  const resetURL = `${req.protocol}://${req.get(
-    'host',
-  )}/api/v1/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? Please click the link ${resetURL} to reset your password.\nIf you didn't forget your password, please ignore this email`;
+  
   try {
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: 'Your reset pasword token',
-    //   message,
-    // });
+    const resetURL = `${req.protocol}://${req.get(
+      'host',
+    )}/api/v1/resetPassword/${resetToken}`;
+    
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'Sucess',
