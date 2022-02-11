@@ -2,11 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
-const productRoutes = require('./api/routes/productsRoute');
-const orderRoutes = require('./api/routes/ordersRoute');
-const userRoutes = require('./api/routes/usersRoute');
+const productRoutes = require('./routes/productsRoute');
+const orderRoutes = require('./routes/ordersRoute');
+const userRoutes = require('./routes/usersRoute');
 const AppError = require('./utils/AppError');
-const globalErrorHandler = require('./api/controllers/errorController');
+const globalErrorHandler = require('./controllers/errorController');
 
 app.use(express.json({ limit: '10kb' }));
 

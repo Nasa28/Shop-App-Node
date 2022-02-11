@@ -1,7 +1,7 @@
 const Order = require('../models/orderModel');
 
-const catchAsync = require('../../utils/catchError');
-const AppError = require('../../utils/AppError');
+const catchAsync = require('../utils/catchError');
+const AppError = require('../utils/AppError');
 
 exports.allOrder = catchAsync(async (req, res, next) => {
   const orders = await Order.find().select('-__v').populate('product', 'name');

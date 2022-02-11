@@ -1,5 +1,5 @@
-const AppError = require('../../utils/AppError');
-const catchAsync = require('../../utils/catchError');
+const AppError = require('../utils/AppError');
+const catchAsync = require('../utils/catchError');
 const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {

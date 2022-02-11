@@ -1,9 +1,9 @@
 const fs = require('fs');
 const Product = require('../models/productModel');
-const catchAsync = require('../../utils/catchError');
-const AppError = require('../../utils/AppError');
-const upload = require('../../utils/multer');
-const cloudinary = require('../../utils/cloud');
+const catchAsync = require('../utils/catchError');
+const AppError = require('../utils/AppError');
+const upload = require('../utils/multer');
+const cloudinary = require('../utils/cloud');
 
 exports.uploadProductImages = upload.array('images', 3);
 
