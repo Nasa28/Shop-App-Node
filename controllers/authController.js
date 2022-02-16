@@ -126,12 +126,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
   // 3) Send it to the users email
 
-  
   try {
     const resetURL = `${req.protocol}://${req.get(
       'host',
     )}/api/v1/resetPassword/${resetToken}`;
-    
+
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
@@ -173,11 +172,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
+  user.role = undefined;
+  passwordChangedAt = undefined
   await user.save();
   // 3) Update the changedPasswordAt property for the current user
+  const url = `${req.protocol}://${req.get('host')}/api/v1/products`;
 
   // 4) Log the user in
   sendTokens(user, res, 200);
+  await new Email(user, url).sendPasswordResetSuccess();
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -194,7 +197,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
-
+  
   // 4) Log user in, send JWT
   sendTokens(user, res, 200);
 });

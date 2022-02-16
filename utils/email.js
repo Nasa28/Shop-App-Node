@@ -55,4 +55,11 @@ module.exports = class Email {
       'Password Reset Token, Valid for 10 minutes',
     );
   }
+
+  async sendPasswordResetSuccess() {
+    await this.send(
+      'passwordResetSuccess',
+      'Your password reset was successful'
+    );
+  }
 };
