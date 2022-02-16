@@ -18,8 +18,14 @@ const cartSchema = new mongoose.Schema({
       },
     },
   ],
+  
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false,
+  },
 });
 
-const Cart = mongoose.model('Cart', cartSchema)
+const Cart = mongoose.model('Cart', cartSchema);
 
-module.exports = Cart
+module.exports = Cart;

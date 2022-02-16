@@ -3,7 +3,7 @@ const slugify = require('slugify');
 
 const productSchema = new mongoose.Schema({
   slug: String,
-  name: {
+  title: {
     type: String,
     required: [true, 'A Product must have a name'],
     trim: true,
@@ -23,6 +23,17 @@ const productSchema = new mongoose.Schema({
   },
 
   images: [String],
+  category: {
+    type: Array,
+  },
+
+  size: {
+    type: String,
+  },
+
+  color: {
+    type: String,
+  },
 
   createdAt: {
     type: Date,
@@ -32,7 +43,7 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.pre('save', function (next) {
-  this.slug = slugify(this.name + Math.random(50), { lower: true });
+  this.slug = slugify(this.title + Math.random(50), { lower: true });
   next();
 });
 

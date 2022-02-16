@@ -21,6 +21,10 @@ exports.allProducts = catchAsync(async (req, res, next) => {
 
 exports.createProduct = catchAsync(async (req, res, next) => {
   const uploader = async (path) => await cloudinary.uploads(path, 'Images');
+  if (!req.files) {
+    return next(new AppError('You must upload a minimum of one image'));
+  }
+
   const urls = [];
   const files = req.files;
   for (const file of files) {
@@ -29,7 +33,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     urls.push(newPath.url);
     fs.unlinkSync(path);
   }
-  if (req.files) req.body.images = urls;
+  req.body.images = urls;
 
   const newProduct = await Product.create(req.body);
   newProduct.__v = undefined;

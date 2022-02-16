@@ -5,10 +5,6 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     default: 1,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 
   product: {
     type: mongoose.Schema.ObjectId,
@@ -21,13 +17,29 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, 'User must belong to a Product'],
   },
-});
 
+  amount: {
+    type: Number,
+    required: [true, 'Order amount cannot be nil'],
+  },
+  address: {
+    type: Object,
+    required: true,
+  },
+  status: {
+    type: String,
+    default: 'Pending',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 orderSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'product',
-    select: '-__v'
+    select: '-__v',
   });
   next();
 });
