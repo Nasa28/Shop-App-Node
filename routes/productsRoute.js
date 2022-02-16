@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const auth = require('../controllers/authController');
 const productsController = require('../controllers/productsController');
 const {
   uploadProductImages,
@@ -14,7 +14,12 @@ const {
 router
   .route('/')
   .get(allProducts)
-  .post(uploadProductImages, createProduct);
+  .post(
+    auth.protectRoutes,
+    auth.restrictTo('dealer'),
+    uploadProductImages,
+    createProduct,
+  );
 
 router.route('/:id').get(getProduct).patch(updateProduct).delete(deleteProduct);
 
