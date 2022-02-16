@@ -1,31 +1,36 @@
 const mongoose = require('mongoose');
 
 const cartSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
+  quantity: {
+    type: Number,
+    default: 1,
   },
 
-  products: [
-    {
-      productId: {
-        type: String,
-      },
+  product: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Product',
+    required: [true, 'Cart must belong to a Product'],
+  },
 
-      quantity: {
-        type: Number,
-        default: 1,
-      },
-    },
-  ],
-  
-  createdAt: {
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: [true, 'Cart must belong to a Product'],
+  },
+
+   createdAt: {
     type: Date,
-    default: Date.now(),
-    select: false,
+    default: Date.now,
   },
 });
 
+cartSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'product',
+    select: '-__v',
+  });
+  next();
+});
 const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;

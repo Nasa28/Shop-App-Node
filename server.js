@@ -3,6 +3,13 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
 
+// HANDLE UNCAUGHT EXCEPTIONS
+
+process.on('uncaughtException', (err) => {
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 const port = process.env.PORT || 3000;
 
 dotenv.config({ path: './config.env' });
@@ -20,4 +27,13 @@ const server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+// HANDLE UNHANDELLED REJECTIONS
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });

@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
 const productRoutes = require('./routes/productsRoute');
-const orderRoutes = require('./routes/ordersRoute');
+const cartRoutes = require('./routes/cartsRoute');
 const userRoutes = require('./routes/usersRoute');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(cors());
 app.use('/api/v1/products', productRoutes);
 
-app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/carts', cartRoutes);
 
 app.use('/api/v1/users', userRoutes);
 
