@@ -27,7 +27,7 @@ router.patch('/updateMyPassword', protectRoutes, updatePassword);
 router.delete('/deleteMe', protectRoutes, deleteMe);
 
 router.patch('/updateMe', protectRoutes, updateMe);
-router.get('/', getUsers);
+router.get('/', protectRoutes, restrictTo('admin'), getUsers);
 router
   .route('/:id')
   .get(getUser)
