@@ -1,5 +1,12 @@
 const express = require('express');
+const helmet = require('helmet');
 const cors = require('cors');
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require('express-rate-limit');
+
+const xss = require('xss-clean');
+const hpp = require('hpp');
+
 const app = express();
 const morgan = require('morgan');
 const productRoutes = require('./routes/productsRoute');
@@ -9,12 +16,48 @@ const reviewRoutes = require('./routes/reviewsRoute');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
+
+// Set security HTTP headers using helmet package
+app.use(helmet());
+
 app.use(express.json({ limit: '10kb' }));
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// LIMIT TOO MANY REQUESTS FROM THE SAME IP ADDRESS
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many request from this IP, please try again in an hour!',
+});
+
+app.use('/api', limiter);
+
+
+// Data sanitization against NOSQL injections
+app.use(mongoSanitize());
+// Data sanitization against XSS
+app.use(xss());
+
+// Prevent Parameter pollution
+
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+      'ratingsAverage',
+    ],
+  })
+);
 app.use(cors());
+
 app.use('/api/v1/products', productRoutes);
 
 app.use('/api/v1/carts', cartRoutes);
