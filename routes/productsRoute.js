@@ -9,6 +9,7 @@ const {
   getProduct,
   updateProduct,
   deleteProduct,
+  getMyProducts,
 } = productsController;
 
 router
@@ -21,6 +22,12 @@ router
     createProduct,
   );
 
+router.get(
+  '/myProducts',
+  auth.protectRoutes,
+  auth.restrictTo('dealer'),
+  getMyProducts,
+);
 router.route('/:id').get(getProduct).patch(updateProduct).delete(deleteProduct);
 
 module.exports = router;

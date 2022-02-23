@@ -88,3 +88,15 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
     status: 'Product deleted',
   });
 });
+
+exports.getMyProducts = catchAsync(async (req, res, next) => {
+  const myProducts = await Product.find({ dealer: req.user.id });
+
+  res.status(200).json({
+    count: myProducts.length,
+    status: 'Success',
+    data: {
+      myProducts,
+    },
+  });
+});
