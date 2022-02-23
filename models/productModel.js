@@ -34,9 +34,6 @@ const productSchema = new mongoose.Schema({
   },
 
   images: [String],
-  category: {
-    type: Array,
-  },
 
   size: {
     type: String,
@@ -45,10 +42,12 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  dealer: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-  },
+  dealer: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+  ],
 
   createdAt: {
     type: Date,

@@ -34,8 +34,10 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     fs.unlinkSync(path);
   }
   req.body.images = urls;
+  if (!req.body.dealer) req.body.dealer = req.user.id;
 
   const newProduct = await Product.create(req.body);
+
   newProduct.__v = undefined;
   res.status(200).json({
     status: 'Created',
