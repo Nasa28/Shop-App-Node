@@ -22,10 +22,15 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product must have a description'],
   },
 
-  category: {
+  productCategory: {
     type: String,
     enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
-    required: [true, 'You must select a category'],
+    required: [true, 'Please, select a category'],
+  },
+
+  subCategory: {
+    type: String,
+    required: [true, 'SubCategory should not be blank'],
   },
 
   images: [String],
@@ -39,6 +44,10 @@ const productSchema = new mongoose.Schema({
 
   color: {
     type: String,
+  },
+  dealer: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
   },
 
   createdAt: {
