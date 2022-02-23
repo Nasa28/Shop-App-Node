@@ -22,6 +22,12 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product must have a description'],
   },
 
+  category: {
+    type: String,
+    enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
+    required: [true, 'You must select a category'],
+  },
+
   images: [String],
   category: {
     type: Array,
