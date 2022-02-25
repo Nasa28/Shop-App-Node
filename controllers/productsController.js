@@ -61,6 +61,14 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.updateProduct = catchAsync(async (req, res, next) => {
+  const productToUpdate = await Product.findById(req.params.id);
+  const createdBy = productToUpdate.dealer.id;
+  if (createdBy !== req.user.id) {
+    return next(
+      new AppError('You are not authorized to perform this action', 403),
+    );
+  }
+
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -69,7 +77,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     return next(new AppError(`No product found with id ${req.params.id}`, 404));
   }
   res.status(200).json({
-    status: 'Updated',
+    status: 'Success',
     data: {
       product,
     },
@@ -77,8 +85,14 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteProduct = catchAsync(async (req, res, next) => {
+  const productToDelete = await Product.findById(req.params.id);
+  const createdBy = productToDelete.dealer.id;
+  if (createdBy !== req.user.id) {
+    return next(
+      new AppError('You are not authorized to perform this action', 403),
+    );
+  }
   const product = await Product.findByIdAndDelete(req.params.id);
-
   if (!product) {
     return next(
       new AppError(`Product with id ${req.params.id} does not exist`, 404),

@@ -28,6 +28,10 @@ router.get(
   auth.restrictTo('dealer'),
   getMyProducts,
 );
-router.route('/:id').get(getProduct).patch(updateProduct).delete(deleteProduct);
+router
+  .route('/:id')
+  .get(getProduct)
+  .patch(auth.protectRoutes, auth.restrictTo('dealer'), updateProduct)
+  .delete(auth.protectRoutes, auth.restrictTo('dealer'), deleteProduct);
 
 module.exports = router;

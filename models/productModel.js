@@ -42,12 +42,10 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  dealer: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-    },
-  ],
+  dealer: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+  },
 
   createdAt: {
     type: Date,
@@ -62,7 +60,10 @@ productSchema.pre('save', function (next) {
 });
 
 productSchema.pre(/^find/, function (next) {
-  this.select('-__v');
+  this.populate({
+    path: 'dealer',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 const Product = mongoose.model('Product', productSchema);
