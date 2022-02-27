@@ -1,5 +1,5 @@
 const multer = require('multer');
-const AppError = require('./AppError');
+const ErrorMsg = require('./ErrorMsg');
 
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
@@ -11,7 +11,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(new AppError('Not an image, please uplaod an image', 400), false);
+    cb(new ErrorMsg('Not an image, please uplaod an image', 400), false);
   }
 };
 

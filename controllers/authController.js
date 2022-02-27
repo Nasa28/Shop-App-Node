@@ -3,8 +3,8 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
-const catchAsync = require('../utils/catchError');
-const AppError = require('../utils/AppError');
+const asyncWrapper = require('../utils/asyncWrapper');
+const ErrorMsg = require('../utils/ErrorMsg');
 const Email = require('../utils/email');
 
 const signToken = (id) => {
@@ -34,7 +34,7 @@ const sendTokens = (user, res, statusCode) => {
   });
 };
 
-exports.signUp = catchAsync(async (req, res, next) => {
+exports.signUp = asyncWrapper(async (req, res, next) => {
   const newUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -51,22 +51,22 @@ exports.signUp = catchAsync(async (req, res, next) => {
   sendTokens(newUser, res, 201);
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+exports.login = asyncWrapper(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new AppError('Please enter your email and password', 400));
+    return next(new ErrorMsg('Please enter your email and password', 400));
   }
 
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    return next(new AppError('Invalid Email or Password', 401));
+    return next(new ErrorMsg('Invalid Email or Password', 401));
   }
 
   sendTokens(user, res, 201);
 });
 
-exports.protectRoutes = catchAsync(async (req, res, next) => {
+exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   // 1) Get the Token and check presence
   let token;
   if (
@@ -78,7 +78,7 @@ exports.protectRoutes = catchAsync(async (req, res, next) => {
 
   if (!token) {
     return next(
-      new AppError('You are not logged in. Please, log in to proceed!', 401),
+      new ErrorMsg('You are not logged in. Please, log in to proceed!', 401),
     );
   }
   // 2) Verify Token
@@ -87,12 +87,12 @@ exports.protectRoutes = catchAsync(async (req, res, next) => {
   // 3) Check if user still exist
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(new AppError('You are not logged in.Please,log in.', 401));
+    return next(new ErrorMsg('You are not logged in.Please,log in.', 401));
   }
   // 4) Check if user changed password after Token was generated
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
-      new AppError('User recently changed password! Please log in again.', 401),
+      new ErrorMsg('User recently changed password! Please log in again.', 401),
     );
   }
 
@@ -105,20 +105,20 @@ exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       next(
-        new AppError('You do not have permission to perform this action', 403),
+        new ErrorMsg('You do not have permission to perform this action', 403),
       );
     }
     next();
   };
 };
 
-exports.forgotPassword = catchAsync(async (req, res, next) => {
+exports.forgotPassword = asyncWrapper(async (req, res, next) => {
   // 1) Get user based on the posted email.
 
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    next(new AppError('There is no user with the email address', 404));
+    next(new ErrorMsg('There is no user with the email address', 404));
   }
   // 2)  Generate a random reset token
 
@@ -142,7 +142,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
     return next(
-      new AppError(
+      new ErrorMsg(
         'There was an error sending the email. Please, try again later',
         500,
       ),
@@ -150,7 +150,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {
+exports.resetPassword = asyncWrapper(async (req, res, next) => {
   // 1) Get user based on token
   const hashedToken = crypto
     .createHash('sha256')
@@ -173,7 +173,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   user.role = undefined;
-  passwordChangedAt = undefined
+  passwordChangedAt = undefined;
   await user.save();
   // 3) Update the changedPasswordAt property for the current user
   const url = `${req.protocol}://${req.get('host')}/api/v1/products`;
@@ -183,13 +183,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await new Email(user, url).sendPasswordResetSuccess();
 });
 
-exports.updatePassword = catchAsync(async (req, res, next) => {
+exports.updatePassword = asyncWrapper(async (req, res, next) => {
   // 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');
 
   // 2) Check if POSTED current password is correct
   if (!(await user.comparePassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError('Your current password is wrong.', 401));
+    return next(new ErrorMsg('Your current password is wrong.', 401));
   }
 
   // 3) If so, update password
@@ -197,7 +197,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
-  
+
   // 4) Log user in, send JWT
   sendTokens(user, res, 200);
 });

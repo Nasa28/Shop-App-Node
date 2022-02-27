@@ -1,13 +1,13 @@
 const fs = require('fs');
 const Product = require('../models/productModel');
-const catchAsync = require('../utils/catchError');
-const AppError = require('../utils/AppError');
+const asyncWrapper = require('../utils/asyncWrapper');
+const ErrorMsg = require('../utils/ErrorMsg');
 const upload = require('../utils/multer');
 const cloudinary = require('../utils/cloud');
 
 exports.uploadProductImages = upload.array('images', 3);
 
-exports.allProducts = catchAsync(async (req, res, next) => {
+exports.allProducts = asyncWrapper(async (req, res, next) => {
   const products = await Product.find();
 
   res.status(200).json({
@@ -19,10 +19,10 @@ exports.allProducts = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createProduct = catchAsync(async (req, res, next) => {
+exports.createProduct = asyncWrapper(async (req, res, next) => {
   const uploader = async (path) => await cloudinary.uploads(path, 'Images');
   if (!req.files) {
-    return next(new AppError('You must upload a minimum of one image'));
+    return next(new ErrorMsg('You must upload a minimum of one image'));
   }
 
   const urls = [];
@@ -47,10 +47,10 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getProduct = catchAsync(async (req, res, next) => {
+exports.getProduct = asyncWrapper(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
-    return next(new AppError(`No product found with id ${req.params.id}`, 404));
+    return next(new ErrorMsg(`No product found with id ${req.params.id}`, 404));
   }
   res.status(200).json({
     status: 'Success',
@@ -60,7 +60,7 @@ exports.getProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateProduct = catchAsync(async (req, res, next) => {
+exports.updateProduct = asyncWrapper(async (req, res, next) => {
   const product = await Product.findOneAndUpdate(
     { $and: [{ _id: req.params.id }, { dealer: req.user.id }] },
     req.body,
@@ -72,10 +72,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 
   if (!product) {
     return next(
-      new AppError(
-        `No product found with id ${req.params.id} Or you are not authorized to perform this action`,
-        404,
-      ),
+      new ErrorMsg(`You are not authorized to perform this action`, 404),
     );
   }
   res.status(200).json({
@@ -86,16 +83,13 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteProduct = catchAsync(async (req, res, next) => {
+exports.deleteProduct = asyncWrapper(async (req, res, next) => {
   const product = await Product.findOneAndDelete({
     $and: [{ _id: req.params.id }, { dealer: req.user.id }],
   });
   if (!product) {
     return next(
-      new AppError(
-        `Product with id ${req.params.id} does not exist Or you are not authorized to perform this action`,
-        404,
-      ),
+      new ErrorMsg(`You are not authorized to perform this action`, 404),
     );
   }
   res.status(201).json({
@@ -103,7 +97,7 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getMyProducts = catchAsync(async (req, res, next) => {
+exports.getMyProducts = asyncWrapper(async (req, res, next) => {
   const myProducts = await Product.find({ dealer: req.user.id });
 
   res.status(200).json({

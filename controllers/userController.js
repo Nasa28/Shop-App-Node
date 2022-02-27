@@ -1,5 +1,5 @@
-const AppError = require('../utils/AppError');
-const catchAsync = require('../utils/catchError');
+const ErrorMsg = require('../utils/ErrorMsg');
+const asyncWrapper = require('../utils/asyncWrapper');
 const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {
@@ -10,8 +10,8 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getUsers = catchAsync(async (req, res) => {
-  const users = await User.find().select('-__v');
+exports.getUsers = asyncWrapper(async (req, res) => {
+  const users = await User.find().select('firstName lastName email');
   res.status(200).json({
     count: users.length,
     status: 'success',
@@ -21,11 +21,11 @@ exports.getUsers = catchAsync(async (req, res) => {
   });
 });
 
-exports.updateMe = catchAsync(async (req, res, next) => {
+exports.updateMe = asyncWrapper(async (req, res, next) => {
   // 1) Create error if user post password related stuff
   if (req.body.password || req.body.passwordConfirm) {
     return next(
-      new AppError(
+      new ErrorMsg(
         'This route is not for password update, please use //updatePassword',
         400,
       ),
@@ -51,7 +51,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
+exports.deleteMe = asyncWrapper(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: 'sucess',
@@ -80,7 +80,7 @@ exports.updateUser = (req, res) => {
   });
 };
 
-exports.deleteUser = catchAsync(async (req, res, next) => {
+exports.deleteUser = asyncWrapper(async (req, res, next) => {
   await User.findByIdAndDelete(req.params.id);
   res.status(204).json({
     status: 'sucess',

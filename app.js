@@ -13,9 +13,8 @@ const productRoutes = require('./routes/productsRoute');
 const cartRoutes = require('./routes/cartsRoute');
 const userRoutes = require('./routes/usersRoute');
 const reviewRoutes = require('./routes/reviewsRoute');
-const AppError = require('./utils/AppError');
+const ErrorMsg = require('./utils/ErrorMsg');
 const globalErrorHandler = require('./controllers/errorController');
-
 
 // Set security HTTP headers using helmet package
 app.use(helmet());
@@ -36,7 +35,6 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-
 // Data sanitization against NOSQL injections
 app.use(mongoSanitize());
 // Data sanitization against XSS
@@ -54,7 +52,7 @@ app.use(
       'price',
       'ratingsAverage',
     ],
-  })
+  }),
 );
 app.use(cors());
 
@@ -66,7 +64,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find this ${req.originalUrl} on this server`, 400));
+  next(new ErrorMsg(`Can't find this ${req.originalUrl} on this server`, 400));
 });
 app.use(globalErrorHandler);
 

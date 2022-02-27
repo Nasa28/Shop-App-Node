@@ -14,7 +14,7 @@
 //   if (file.mimetype.startsWith('image')) {
 //     cb(null, true);
 //   } else {
-//     cb(new AppError('Not an image, please uplaod an image', 400), false);
+//     cb(new ErrorMsg('Not an image, please uplaod an image', 400), false);
 //   }
 // };
 
@@ -38,7 +38,7 @@
 //   next();
 // };
 
-// exports.resizeProductImage = catchAsync(async (req, res, next) => {
+// exports.resizeProductImage = asyncWrapper(async (req, res, next) => {
 //   if (!req.files) return next();
 //   req.body.images = [];
 
