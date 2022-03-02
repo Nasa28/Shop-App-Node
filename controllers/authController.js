@@ -51,16 +51,16 @@ exports.signUp = asyncWrapper(async (req, res, next) => {
   sendTokens(newUser, res, 201);
 });
 
-exports.login = asyncWrapper(async (req, res, next) => {
+exports.login = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new ErrorMsg('Please enter your email and password', 400));
+    throw new ErrorMsg('Please enter your email and password', 400);
   }
 
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    return next(new ErrorMsg('Invalid Email or Password', 401));
+    throw new ErrorMsg('Invalid Email or Password', 401);
   }
 
   sendTokens(user, res, 201);
@@ -77,8 +77,9 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(
-      new ErrorMsg('You are not logged in. Please, log in to proceed!', 401),
+    throw new ErrorMsg(
+      'You are not logged in. Please, log in to proceed!',
+      401,
     );
   }
   // 2) Verify Token
@@ -87,12 +88,13 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   // 3) Check if user still exist
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(new ErrorMsg('You are not logged in.Please,log in.', 401));
+    throw new ErrorMsg('You are not logged in.Please,log in.', 401);
   }
   // 4) Check if user changed password after Token was generated
   if (currentUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new ErrorMsg('User recently changed password! Please log in again.', 401),
+    throw new ErrorMsg(
+      'User recently changed password! Please log in again.',
+      401,
     );
   }
 
@@ -101,24 +103,25 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   next();
 });
 // Middleware for Admin Access
-exports.restrictTo = (...roles) => {
+exports.adminAccess = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      next(
-        new ErrorMsg('You do not have permission to perform this action', 403),
+      throw new ErrorMsg(
+        'You do not have permission to perform this action',
+        403,
       );
     }
     next();
   };
 };
 
-exports.forgotPassword = asyncWrapper(async (req, res, next) => {
+exports.forgotPassword = asyncWrapper(async (req, res) => {
   // 1) Get user based on the posted email.
 
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    next(new ErrorMsg('There is no user with the email address', 404));
+    throw new ErrorMsg('There is no user with the email address', 404);
   }
   // 2)  Generate a random reset token
 
@@ -141,11 +144,10 @@ exports.forgotPassword = asyncWrapper(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(
-      new ErrorMsg(
-        'There was an error sending the email. Please, try again later',
-        500,
-      ),
+
+    throw new ErrorMsg(
+      'There was an error sending the email. Please, try again later',
+      500,
     );
   }
 });
@@ -164,7 +166,7 @@ exports.resetPassword = asyncWrapper(async (req, res, next) => {
 
   // 2) If token has not expired and there is a user, set the new password
   if (!user) {
-    return next(new Error('Token is invalid or has expired', 400));
+    throw new Error('Token is invalid or has expired', 400);
   }
 
   user.password = req.body.password;

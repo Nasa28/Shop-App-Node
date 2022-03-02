@@ -17,7 +17,7 @@ router
   .get(allProducts)
   .post(
     auth.protectRoutes,
-    auth.restrictTo('dealer'),
+    auth.adminAccess('dealer'),
     uploadProductImages,
     createProduct,
   );
@@ -25,13 +25,13 @@ router
 router.get(
   '/myProducts',
   auth.protectRoutes,
-  auth.restrictTo('dealer'),
+  auth.adminAccess('dealer'),
   getMyProducts,
 );
 router
   .route('/:id')
   .get(getProduct)
-  .patch(auth.protectRoutes, auth.restrictTo('dealer'), updateProduct)
-  .delete(auth.protectRoutes, auth.restrictTo('dealer'), deleteProduct);
+  .patch(auth.protectRoutes, auth.adminAccess('dealer'), updateProduct)
+  .delete(auth.protectRoutes, auth.adminAccess('dealer'), deleteProduct);
 
 module.exports = router;

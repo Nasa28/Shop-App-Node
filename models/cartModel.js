@@ -18,7 +18,7 @@ const cartSchema = new mongoose.Schema({
     required: [true, 'Cart must belong to a Product'],
   },
 
-   createdAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
@@ -26,11 +26,20 @@ const cartSchema = new mongoose.Schema({
 
 cartSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'product',
-    select: '-__v',
+    path: 'user',
+    select: 'id',
   });
   next();
 });
+
+cartSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'product',
+    select: '-__v -passwordChangedAt -dealer',
+  });
+  next();
+});
+
 const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;

@@ -22,7 +22,7 @@ exports.allProducts = asyncWrapper(async (req, res, next) => {
 exports.createProduct = asyncWrapper(async (req, res, next) => {
   const uploader = async (path) => await cloudinary.uploads(path, 'Images');
   if (!req.files) {
-    return next(new ErrorMsg('You must upload a minimum of one image'));
+    throw new ErrorMsg('You must upload a minimum of one image');
   }
 
   const urls = [];
@@ -47,10 +47,10 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
   });
 });
 
-exports.getProduct = asyncWrapper(async (req, res, next) => {
+exports.getProduct = asyncWrapper(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
-    return next(new ErrorMsg(`No product found with id ${req.params.id}`, 404));
+    throw new ErrorMsg(`No product found with id ${req.params.id}`, 404);
   }
   res.status(200).json({
     status: 'Success',
