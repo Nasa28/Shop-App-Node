@@ -1,11 +1,10 @@
 const Cart = require('../models/cartModel');
-
 const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
 const Product = require('../models/productModel');
 
-exports.allCart = asyncWrapper(async (req, res, next) => {
-  const carts = await Cart.find({});
+exports.getCartItems = asyncWrapper(async (req, res, next) => {
+  const carts = await Cart.find({ user: req.user.id });
 
   res.status(200).json({
     count: carts.length,
@@ -37,10 +36,12 @@ exports.getCart = asyncWrapper(async (req, res, next) => {
 exports.addToCart = asyncWrapper(async (req, res, next) => {
   if (!req.body.product) req.body.product = req.product.id;
   if (!req.body.user) req.body.user = req.user.id;
-  const product = await Product.findById(req.body.product);
-  // If the id is invalid
+
+  let cart = await Cart.findOne({ user: req.user.id });
+  let product = await Product.findOne({ product: req.body.product });
+
   if (!product) {
-    throw new ErrorMsg(`No product found with id ${req.body.product}`, 404);
+    return next(new ErrorMsg('This cart does not exist', 404));
   }
   // Prevent Users from add the same product twice
   // const check = await Cart.findOne({ product: req.body.product });

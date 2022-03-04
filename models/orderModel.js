@@ -1,22 +1,63 @@
 const mongoose = require('mongoose');
 
-const cartSchema = new mongoose.Schema({
-  address: {
-    type: Object,
-    required: true,
+const orderSchema = new mongoose.Schema({
+  cart: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cart',
+    },
+  ],
+
+  shippingAddress1: {
+    type: String,
   },
+
+  shippingAddress2: {
+    type: String,
+  },
+
+  state: {
+    type: String,
+  },
+
+  city: {
+    type: String,
+  },
+
+  zip: {
+    type: String,
+  },
+
+  country: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+
   status: {
     type: String,
+    required: true,
     default: 'Pending',
   },
 
-  createdAt: {
+  totalPrice: {
+    type: Number,
+  },
+
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  dateOrdered: {
     type: Date,
-    default: Date.now(),
-    select: false,
+    date: Date.now(),
   },
 });
 
-const Cart = mongoose.model('Cart', cartSchema);
+orderSchema.virtual('id', function () {
+  return this._id.toHexString();
+});
+const Order = mongoose.model('Order', orderSchema);
 
-module.exports = Cart;
+module.exports = Order;

@@ -12,6 +12,8 @@ const morgan = require('morgan');
 const productRoutes = require('./routes/productsRoute');
 const cartRoutes = require('./routes/cartsRoute');
 const userRoutes = require('./routes/usersRoute');
+
+const categoryRoutes = require('./routes/categoryRoute');
 const reviewRoutes = require('./routes/reviewsRoute');
 const ErrorMsg = require('./utils/ErrorMsg');
 const globalErrorHandler = require('./controllers/errorController');
@@ -59,6 +61,7 @@ app.use(cors());
 app.use('/api/v1/products', productRoutes);
 
 app.use('/api/v1/carts', cartRoutes);
+app.use('/api/v1/categories', categoryRoutes);
 
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/reviews', reviewRoutes);

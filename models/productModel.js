@@ -1,57 +1,86 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const productSchema = new mongoose.Schema({
-  slug: String,
-  title: {
-    type: String,
-    required: [true, 'A Product must have a name'],
-    trim: true,
-    maxlength: [30, 'Product name must not be more than 30 characters'],
-    minlength: [5, 'Product name must be more than 10 characters'],
-  },
+const productSchema = new mongoose.Schema(
+  {
+    slug: String,
+    title: {
+      type: String,
+      required: [true, 'A Product must have a name'],
+      trim: true,
+      maxlength: [30, 'Product name must not be more than 30 characters'],
+      minlength: [5, 'Product name must be more than 10 characters'],
+    },
 
-  price: {
-    type: Number,
-    required: [true, 'A product must have a price'],
-  },
+    price: {
+      type: Number,
+      required: [true, 'A product must have a price'],
+    },
 
-  description: {
-    type: String,
-    trim: true,
-    required: [true, 'Product must have a description'],
-  },
+    description: {
+      type: String,
+      trim: true,
+      required: [true, 'Product must have a description'],
+    },
 
-  productCategory: {
-    type: String,
-    enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
-    required: [true, 'Please, select a category'],
-  },
+    productCategory: {
+      type: String,
+      enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
+      required: [true, 'Please, select a category'],
+    },
 
-  subCategory: {
-    type: String,
-    required: [true, 'SubCategory should not be blank'],
-  },
+    subCategory: {
+      type: String,
+      required: [true, 'SubCategory should not be blank'],
+    },
+    // category: {
+    //   type: mongoose.Schema.ObjectId,
+    //   ref: 'Category',
+    // },
 
-  images: [String],
+    image: {
+      type: String,
+    },
 
-  size: {
-    type: String,
-  },
+    stockBalance: {
+      type: Number,
+      min: 0,
+      max: 200,
+    },
 
-  color: {
-    type: String,
-  },
-  dealer: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-  },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
 
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-    select: false,
+    images: [String],
+
+    size: {
+      type: String,
+    },
+
+    color: {
+      type: String,
+    },
+    dealer: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+      select: false,
+    },
   },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+);
+
+productSchema.virtual('id', function () {
+  return this._id.toHexString();
 });
 
 productSchema.pre('save', function (next) {
@@ -62,7 +91,7 @@ productSchema.pre('save', function (next) {
 productSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'dealer',
-    select: '-__v -passwordChangedAt',
+    select: '-__v -passwordChangedAt -role',
   });
   next();
 });
