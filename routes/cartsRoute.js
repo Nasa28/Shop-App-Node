@@ -4,12 +4,12 @@ const authController = require('../controllers/authController');
 const { protectRoutes } = authController;
 const router = express.Router();
 
-const { getCartItems, addToCart, updateCart, deleteCart } = cartsController;
+const { getCartItems, addToCart, deleteItemFromCart } = cartsController;
 
 router
   .route('/')
   .get(protectRoutes, getCartItems)
-  .post(protectRoutes, addToCart);
-router.route('/:id').patch(updateCart).delete(deleteCart);
+  .post(protectRoutes, addToCart)
+  .delete(protectRoutes, deleteItemFromCart);
 
 module.exports = router;

@@ -23,10 +23,10 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
     const newcart = await Cart.create(req.body);
 
     res.status(200).json({
-      status: 'Success',
-      data: {
-        cart: newcart,
-      },
+      status: 'Product Added to cart',
+      // data: {
+      //   cart: newcart,
+      // },
     });
   } else {
     const newQuantity = (cartItemids[0].quantity += req.body.quantity);
@@ -49,32 +49,18 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
   }
 });
 
-exports.updateCart = asyncWrapper(async (req, res, next) => {
-  const cart = await Cart.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
+exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
+  if (!req.body.user) req.body.user = req.user.id;
+
+  const cart = await Cart.findOneAndDelete({
+    $and: [{ product: req.body.product }, { user: req.user._id }],
   });
 
   if (!cart) {
-    return next(new ErrorMsg('This cart does not exist', 404));
-  }
-
-  res.status(200).json({
-    status: 'cart Updated',
-    data: {
-      cart,
-    },
-  });
-});
-
-exports.deleteCart = asyncWrapper(async (req, res, next) => {
-  const cart = await Cart.findByIdAndDelete(req.params.id);
-
-  if (!cart) {
-    return next(new ErrorMsg('This cart does not exist', 404));
+    return next(new ErrorMsg('This Item does not exist', 404));
   }
 
   res.status(204).json({
-    status: 'cart Updated',
+    status: 'Product removed from cart',
   });
 });
