@@ -52,7 +52,7 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
 exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
 
-  const cart = await Cart.findOneAndDelete({
+  const cart = await Cart.findOneAndRemove({
     $and: [{ product: req.body.product }, { user: req.user._id }],
   });
 
