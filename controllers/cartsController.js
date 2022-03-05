@@ -29,7 +29,7 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
       // },
     });
   } else {
-    const newQuantity = (cartItemids[0].quantity += req.body.quantity);
+    const newQuantity = (cartItemids[0].quantity += req.body.quantity || 1);
 
     const cart = await Cart.findOneAndUpdate(
       { product: req.body.product },
@@ -53,11 +53,10 @@ exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
 
   const cart = await Cart.findOneAndRemove({
-    $and: [{ product: req.body.product }, { user: req.user._id }],
+    $and: [{ _id: req.body.id }, { user: req.user._id }],
   });
-
   if (!cart) {
-    return next(new ErrorMsg('This Item does not exist', 404));
+    return next(new ErrorMsg('You do not have this product in your cart', 404));
   }
 
   res.status(204).json({
