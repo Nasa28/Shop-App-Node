@@ -1,28 +1,36 @@
 const mongoose = require('mongoose');
 
-const cartSchema = new mongoose.Schema({
-  quantity: {
-    type: Number,
-    default: 1,
-  },
+const cartSchema = new mongoose.Schema(
+  {
+    quantity: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
 
-  product: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Product',
-    required: [true, 'Cart must belong to a Product'],
-  },
+    product: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Product',
+      },
+    ],
 
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: [true, 'Cart must belong to a Product'],
-  },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Cart must belong to a User'],
+    },
 
-  createdAt: {
-    type: Date,
-    default: Date.now,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-});
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+);
 
 cartSchema.pre(/^find/, function (next) {
   this.populate({

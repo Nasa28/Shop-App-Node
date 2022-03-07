@@ -3,7 +3,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
-
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
@@ -12,6 +11,7 @@ const morgan = require('morgan');
 const productRoutes = require('./routes/productsRoute');
 const cartRoutes = require('./routes/cartsRoute');
 const userRoutes = require('./routes/usersRoute');
+const orderRoutes = require('./routes/orderRoute');
 
 const categoryRoutes = require('./routes/categoryRoute');
 const reviewRoutes = require('./routes/reviewsRoute');
@@ -56,11 +56,14 @@ app.use(
     ],
   }),
 );
+
+
 app.use(cors());
 
 app.use('/api/v1/products', productRoutes);
 
 app.use('/api/v1/carts', cartRoutes);
+app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 
 app.use('/api/v1/users', userRoutes);

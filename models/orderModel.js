@@ -5,6 +5,7 @@ const orderSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Cart',
+      required: [true, 'There is no product in your Cart'],
     },
   ],
 
