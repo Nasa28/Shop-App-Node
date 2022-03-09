@@ -3,7 +3,13 @@ const slugify = require('slugify');
 
 const productSchema = new mongoose.Schema(
   {
-    slug: String,
+    slug: {
+      type: String,
+      unique: true,
+      text: true,
+      index: true,
+      lowercase: true,
+    },
     title: {
       type: String,
       required: [true, 'A Product must have a name'],
@@ -29,14 +35,14 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Please, select a category'],
     },
 
-    subCategory: {
-      type: String,
-      required: [true, 'SubCategory should not be blank'],
-    },
-    // category: {
-    //   type: mongoose.Schema.ObjectId,
-    //   ref: 'Category',
+    // subCategory: {
+    //   type: String,
+    //   required: [true, 'SubCategory should not be blank'],
     // },
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Category',
+    },
 
     image: {
       type: String,
@@ -52,20 +58,46 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
+    sold: {
+      type: Number,
+      default: 0,
+    },
     images: [String],
 
     size: {
       type: String,
     },
-
+    shipping: {
+      type: String,
+      enum: ['Yes', 'No'],
+    },
     color: {
       type: String,
+      enum: [
+        'Red',
+        'Black',
+        'Brown',
+        'Silver',
+        'Blue',
+        'White',
+        'pink',
+        'orange',
+      ],
     },
     dealer: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
     },
+
+    // rating: [
+    //   {
+    //     star: Number,
+    //     postedBy: {
+    //       type: mongoose.Schema.ObjectId,
+    //       ref: 'User',
+    //     },
+    //   },
+    // ],
 
     createdAt: {
       type: Date,
@@ -84,7 +116,10 @@ productSchema.virtual('id', function () {
 });
 
 productSchema.pre('save', function (next) {
-  this.slug = slugify(this.title + Math.random(50), { lower: true });
+  this.slug = slugify(
+    this.name + '-' + (Math.random() + 1).toString(36).substring(2),
+    { lower: true },
+  );
   next();
 });
 

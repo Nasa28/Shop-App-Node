@@ -3,9 +3,17 @@ const CategoryController = require('../controllers/categoryController');
 const authController = require('../controllers/authController');
 const { protectRoutes } = authController;
 const router = express.Router();
-const { createCategory, deleteCategory } = CategoryController;
+const { createCategory, deleteCategory, listCategories, updateCategory } =
+  CategoryController;
 
-router.route('/').get().post(protectRoutes, createCategory);
- router.route('/:id').get().patch().delete(protectRoutes, deleteCategory);
+router
+  .route('/')
+  .get(protectRoutes, listCategories)
+  .post(protectRoutes, createCategory);
+router
+  .route('/:slug')
+  .get()
+  .patch(protectRoutes, updateCategory)
+  .delete(protectRoutes, deleteCategory);
 
 module.exports = router;
