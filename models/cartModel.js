@@ -7,15 +7,19 @@ const cartSchema = new mongoose.Schema(
       required: true,
       default: 1,
     },
-
-    product: [
+    color: String,
+    price: Number,
+    products: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Product',
+        product: {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Product',
+        },
       },
     ],
-
-    user: {
+    cartTotal: Number,
+    totalWithDiscount: Number,
+    orderedBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'Cart must belong to a User'],
@@ -32,21 +36,21 @@ const cartSchema = new mongoose.Schema(
   },
 );
 
-cartSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'user',
-    select: 'id',
-  });
-  next();
-});
+// cartSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'user',
+//     select: 'id',
+//   });
+//   next();
+// });
 
-cartSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'product',
-    select: '-__v -passwordChangedAt -dealer',
-  });
-  next();
-});
+// cartSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'product',
+//     select: '-__v -passwordChangedAt -dealer',
+//   });
+//   next();
+// });
 
 const Cart = mongoose.model('Cart', cartSchema);
 
