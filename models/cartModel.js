@@ -1,39 +1,6 @@
 const mongoose = require('mongoose');
 
 const cartSchema = new mongoose.Schema(
-  // {
-  //   count: {
-  //     type: Number,
-  //     required: true,
-  //     default: 1,
-  //   },
-  //   color: String,
-  //   price: Number,
-  //   products: [
-  //     {
-  //       product: {
-  //         type: mongoose.Schema.ObjectId,
-  //         ref: 'Product',
-  //       },
-  //     },
-  //   ],
-  //   cartTotal: Number,
-  //   totalWithDiscount: Number,
-  //   orderedBy: {
-  //     type: mongoose.Schema.ObjectId,
-  //     ref: 'User',
-  //     required: [true, 'Cart must belong to a User'],
-  //   },
-
-  //   createdAt: {
-  //     type: Date,
-  //     default: Date.now,
-  //   },
-  // },
-  // {
-  //   toJSON: { virtuals: true },
-  //   toObject: { virtuals: true },
-  // },
   {
     items: [
       {

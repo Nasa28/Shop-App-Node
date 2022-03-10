@@ -46,7 +46,7 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
   }
   const price = item.price;
   if (cart) {
-    // if cart exists for the user
+    // Check if cart exists for the user
     let productIndex = cart.items.findIndex((ele) => ele.product == product);
     // Check if product exists or not
 
@@ -61,7 +61,7 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
     cart = await cart.save();
     res.status(201).json({ status: 'Product Added to Cart', quantity });
   } else {
-    //if no cart exists, create one
+    //Check if no cart exists, create one
     let newCart = await Cart.create({
       product,
       orderedBy,
