@@ -1,75 +1,31 @@
 const Cart = require('../models/cartModel');
 const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
-
+const Product = require('../models/productModel');
 exports.getCartItems = asyncWrapper(async (req, res, next) => {
-  const carts = await Cart.find({ user: req.user.id }).select('-__v');
+  const cart = await Cart.findOne({ orderedBy: req.user.id }).select('-__v');
+
+  if (!cart) {
+    res.status(404).json({
+      status: 'Your cart is empty',
+    });
+  }
 
   res.status(200).json({
-    count: carts.length,
+    count: cart.items.length,
     status: 'Success',
 
-    carts,
+    cart,
   });
 });
-
-// exports.addToCart = asyncWrapper(async (req, res, next) => {
-//   if (!req.body.product) req.body.product = req.product.id;
-//   if (!req.body.user) req.body.user = req.user.id;
-
-//   let cart = await Cart.findOne({ user: req.user.id });
-//   const cartItemids = await Cart.find({ product: req.body.product });
-
-//   if (cartItemids.length !== 0) {
-//     const newQuantity = (cartItemids[0].quantity += req.body.quantity || 1);
-
-//     const cart = await Cart.findOneAndUpdate(
-//       { product: req.body.product },
-//       { quantity: newQuantity },
-//       {
-//         new: true,
-//         runValidators: true,
-//       },
-//     );
-
-//     res.status(200).json({
-//       status: 'Success',
-//       data: {
-//         newQuantity: cart.quantity,
-//       },
-//     });
-//   }
-//   if (cartItemids.length === 0 && cart === null) {
-//     // const newcart = await Cart.create(req.body);
-
-//     const newCart = await Cart.create({
-//       product: req.body.product,
-//       quantity: req.body.quantity,
-//       user: req.body.user,
-//     });
-
-//     res.status(200).json({
-//       status: 'Product Added to cart',
-//       data: {
-//         cart: newCart,
-//       },
-//     });
-//   } else if (cartItemids.length === 0) {
-//     cart.product.push(req.body.product);
-//     await cart.save();
-
-//     res.status(200).json({
-//       status: 'New Product Added to cart',
-//     });
-//   }
-// });
 
 exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
 
   const cart = await Cart.findOneAndRemove({
-    $and: [{ _id: req.body.id }, { user: req.user._id }],
+    $and: [{ product: req.body.id }, { orderedBy: req.user.id }],
   });
+
   if (!cart) {
     return next(new ErrorMsg('You do not have this product in your cart', 404));
   }
@@ -79,4 +35,42 @@ exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   });
 });
 
-exports.addToCart = asyncWrapper(async (req, res, next) => {});
+exports.addToCart = asyncWrapper(async (req, res, next) => {
+  if (!req.body.orderedBy) req.body.orderedBy = req.user.id;
+  const { product, quantity, orderedBy } = req.body;
+
+  let cart = await Cart.findOne({ orderedBy: req.user.id });
+  let item = await Product.findOne({ _id: product });
+  if (!item) {
+    return next(new ErrorMsg('product not found', 404));
+  }
+  const price = item.price;
+  if (cart) {
+    // if cart exists for the user
+    let productIndex = cart.items.findIndex((ele) => ele.product == product);
+    // Check if product exists or not
+
+    if (productIndex > -1) {
+      let item = cart.items[productIndex];
+      item.quantity += quantity;
+      cart.items[productIndex] = item;
+    } else {
+      cart.items.push({ product });
+    }
+    cart.cartTotal += quantity * price;
+    cart = await cart.save();
+    res.status(201).json({ status: 'Product Added to Cart', quantity });
+  } else {
+    //if no cart exists, create one
+    let newCart = await Cart.create({
+      product,
+      orderedBy,
+      quantity,
+    });
+
+    newCart.cartTotal += quantity * price;
+    newCart.items.push({ product, quantity });
+    newCart = await newCart.save();
+    res.status(201).json({ status: 'Product Added to Cart', quantity });
+  }
+});

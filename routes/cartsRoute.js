@@ -4,7 +4,7 @@ const authController = require('../controllers/authController');
 const { protectRoutes } = authController;
 const router = express.Router();
 
-const { getCartItems, addToCart, deleteItemFromCart } = cartsController;
+const { addToCart, getCartItems, deleteItemFromCart } = cartsController;
 
 router
   .route('/')
