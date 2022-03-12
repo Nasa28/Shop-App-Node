@@ -3,9 +3,7 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
 const Product = require('../models/productModel');
 exports.getCartItems = asyncWrapper(async (req, res, next) => {
-  const cart = await Cart.findOne({ orderedBy: req.user.id }).select(
-    '-__v',
-  );
+  const cart = await Cart.findOne({ orderedBy: req.user.id }).select('-__v');
 
   if (!cart) {
     res.status(404).json({
@@ -21,16 +19,34 @@ exports.getCartItems = asyncWrapper(async (req, res, next) => {
   });
 });
 
-exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
-  if (!req.body.user) req.body.user = req.user.id;
+exports.clearMyCart = asyncWrapper(async (req, res, next) => {
   const cart = await Cart.findOneAndRemove({
-    $and: [{ product: req.body.id }, { orderedBy: req.user.id }],
+    orderedBy: req.user.id,
   });
 
   if (!cart) {
     return next(new ErrorMsg('You do not have this product in your cart', 404));
   }
 
+  res.status(204).json({
+    status: 'Product removed from cart',
+  });
+});
+
+exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
+  let cart = await Cart.findOne({ orderedBy: req.user.id });
+  
+  const getIndex = cart.items.findIndex(
+    (ele) => ele.products[0].id === req.body.id,
+  );
+  if (getIndex > -1) {
+    let product = cart.items[getIndex];
+    cart.cartTotal -= product.quantity * product.price;
+    cart.items.splice(getIndex, 1);
+    await cart.save();
+  } else {
+    throw new ErrorMsg('You do not have this product in your cart', 404);
+  }
   res.status(204).json({
     status: 'Product removed from cart',
   });
@@ -55,15 +71,14 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
       product.quantity += quantity || 1;
       cart.items[productIndex] = product;
     } else {
-      cart.items.push({ products, quantity });
+      cart.items.push({ products, quantity, price });
     }
-    // Check if product exists or not
 
     cart.cartTotal += price * (quantity || 1);
     cart = await cart.save();
     res.status(201).json({ status: 'Product Added to Cart', quantity });
   } else {
-    //Check if no cart exists, create one
+    //Check if no cart exists,then create one
     let newCart = await new Cart({
       products,
       orderedBy,
@@ -71,7 +86,7 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
     });
 
     newCart.cartTotal += price * (quantity || 1);
-    newCart.items.push({ products, quantity });
+    newCart.items.push({ products, quantity, price });
     newCart = await newCart.save();
     res.status(201).json({ status: 'Product Added to Cart', quantity });
   }
