@@ -35,7 +35,7 @@ exports.clearMyCart = asyncWrapper(async (req, res, next) => {
 
 exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   let cart = await Cart.findOne({ orderedBy: req.user.id });
-  
+
   const getIndex = cart.items.findIndex(
     (ele) => ele.products[0].id === req.body.id,
   );
@@ -57,19 +57,20 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
   const { products, quantity, orderedBy } = req.body;
 
   let cart = await Cart.findOne({ orderedBy: req.user.id });
-  let product = await Product.findOne({ id: products });
+  let product = await Product.findOne({ _id: products });
   if (!product) {
     return next(new ErrorMsg('product not found', 404));
   }
   const price = product.price;
+
   if (cart) {
     let productIndex = cart.items.findIndex(
       (ele) => ele.products[0].id === products,
     );
     if (productIndex > -1) {
-      let product = cart.items[productIndex];
-      product.quantity += quantity || 1;
-      cart.items[productIndex] = product;
+      let item = cart.items[productIndex];
+      item.quantity += quantity || 1;
+      cart.items[productIndex] = item;
     } else {
       cart.items.push({ products, quantity, price });
     }
@@ -78,7 +79,6 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
     cart = await cart.save();
     res.status(201).json({ status: 'Product Added to Cart', quantity });
   } else {
-    //Check if no cart exists,then create one
     let newCart = await new Cart({
       products,
       orderedBy,
