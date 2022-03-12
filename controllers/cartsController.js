@@ -10,26 +10,34 @@ exports.getCartItems = asyncWrapper(async (req, res, next) => {
       status: 'Your cart is empty',
     });
   }
-
+  const { _id, orderedBy, products, items } = cart;
   res.status(200).json({
     count: cart.items.length,
     status: 'Success',
-
-    cart,
+    _id,
+    orderedBy,
+    products,
+    items,
   });
 });
 
-exports.clearMyCart = asyncWrapper(async (req, res, next) => {
-  const cart = await Cart.findOneAndRemove({
+exports.emptyCart = asyncWrapper(async (req, res, next) => {
+  const cart = await Cart.findOne({
     orderedBy: req.user.id,
   });
 
   if (!cart) {
-    return next(new ErrorMsg('You do not have this product in your cart', 404));
+    return next(
+      new ErrorMsg(
+        'You do not have any Cart, Add products to cart to create',
+        404,
+      ),
+    );
   }
-
+  cart.items.splice(0, cart.items.length);
+  await cart.save();
   res.status(204).json({
-    status: 'Product removed from cart',
+    status: 'Cart Emptied',
   });
 });
 

@@ -38,18 +38,12 @@ const cartSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
-// cartSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'items.product',
-//     select: '-__v -passwordChangedAt -dealer',
-//   });
-//   next();
-// });
+
 
 cartSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'items.products',
-    select: '-__v -passwordChangedAt -dealer',
+    select: '_id title price description images',
   });
   next();
 });

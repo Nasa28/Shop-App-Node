@@ -123,13 +123,13 @@ productSchema.pre('save', function (next) {
   next();
 });
 
-productSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'dealer',
-    select: '-__v -passwordChangedAt -role',
-  });
-  next();
-});
+// productSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'dealer',
+//     select: '-__v -passwordChangedAt -role',
+//   });
+//   next();
+// });
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;
