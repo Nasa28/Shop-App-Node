@@ -4,24 +4,24 @@ const cartSchema = new mongoose.Schema(
   {
     items: [
       {
-        product: [
+        products: [
           {
             type: mongoose.Schema.ObjectId,
             ref: 'Product',
-            required: [true, 'Cart must be owned by a user'],
+            required: [true, 'Cart must have a product'],
           },
         ],
 
-        title: String,
         quantity: {
           type: Number,
+          default: 1,
           required: true,
           min: [1, 'Quantity can not be less then 1.'],
-          default: 1,
         },
         price: Number,
       },
     ],
+
     cartTotal: {
       type: Number,
       required: true,
@@ -38,15 +38,21 @@ const cartSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
+// cartSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'items.product',
+//     select: '-__v -passwordChangedAt -dealer',
+//   });
+//   next();
+// });
 
 cartSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'items.product',
+    path: 'items.products',
     select: '-__v -passwordChangedAt -dealer',
   });
   next();
 });
-
 const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;
