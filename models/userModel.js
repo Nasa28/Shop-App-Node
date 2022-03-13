@@ -1,7 +1,8 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -18,6 +19,10 @@ const userSchema = new mongoose.Schema({
     required: [true, 'User must have an email address'],
     unique: true,
     lowercase: true,
+    match: [
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      'Please provide a valid email',
+    ],
     validate: [validator.isEmail, 'Please, enter a valid email'],
   },
   role: {
@@ -110,6 +115,33 @@ userSchema.methods.CreatePasswordResetToken = function () {
   console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
+};
+
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+cookieOptions = {
+  expires: new Date(
+    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+  ),
+  httpOnly: true,
+};
+
+userSchema.methods.sendTokens = function (user, res, statusCode) {
+  const token = signToken(this._id);
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  res.cookie('jwt', token, cookieOptions);
+
+  this.password = undefined;
+  this.__v = undefined;
+  res.status(statusCode).json({
+    token,
+    status: 'Success',
+    user,
+  });
 };
 
 const User = mongoose.model('User', userSchema);
