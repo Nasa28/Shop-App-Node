@@ -4,12 +4,13 @@ const authController = require('../controllers/authController');
 const { protectRoutes } = authController;
 const router = express.Router();
 
-const { placeOder, getOrders, cancelOrder } = ordersController;
+const { checkoutSession, getOrders, cancelOrder } = ordersController;
 
 router
   .route('/')
   .get(protectRoutes, getOrders)
-  .post(protectRoutes, placeOder)
+  // .post(protectRoutes, checkoutSession)
   .delete(protectRoutes, cancelOrder);
 
+router.get('/create-checkout-session/',protectRoutes, checkoutSession);
 module.exports = router;

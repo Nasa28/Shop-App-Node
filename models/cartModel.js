@@ -18,6 +18,7 @@ const cartSchema = new mongoose.Schema(
           required: true,
           min: [1, 'Quantity can not be less then 1.'],
         },
+
         price: Number,
       },
     ],
@@ -26,6 +27,12 @@ const cartSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 0,
+    },
+
+    itemCount: {
+      type: Number,
+      required: true,
+      default: 1,
     },
     orderedBy: {
       type: mongoose.Schema.ObjectId,
@@ -38,7 +45,6 @@ const cartSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
-
 
 cartSchema.pre(/^find/, function (next) {
   this.populate({

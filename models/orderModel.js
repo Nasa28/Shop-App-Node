@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  cart: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Cart',
-      required: [true, 'There is no product in your Cart'],
-    },
-  ],
+  // cart: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: 'Cart',
+  //     required: [true, 'There is no product in your Cart'],
+  //   },
+  // ],
 
   shippingAddress1: {
     type: String,
   },
 
-  shippingAddress2: {
-    type: String,
-  },
+  // shippingAddress2: {
+  //   type: String,
+  // },
 
   state: {
     type: String,
@@ -25,9 +25,9 @@ const orderSchema = new mongoose.Schema({
     type: String,
   },
 
-  zip: {
-    type: String,
-  },
+  // zip: {
+  //   type: String,
+  // },
 
   country: {
     type: String,
@@ -42,9 +42,9 @@ const orderSchema = new mongoose.Schema({
     default: 'Pending',
   },
 
-  totalPrice: {
-    type: Number,
-  },
+  // totalPrice: {
+  //   type: Number,
+  // },
 
   user: {
     type: mongoose.Schema.Types.ObjectId,

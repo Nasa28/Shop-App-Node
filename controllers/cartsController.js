@@ -10,11 +10,13 @@ exports.getCartItems = asyncWrapper(async (req, res, next) => {
       status: 'Your cart is empty',
     });
   }
-  const { _id, orderedBy, products, items } = cart;
+  const { _id, orderedBy, products, items, cartTotal, itemCount } = cart;
   res.status(200).json({
     count: cart.items.length,
     status: 'Success',
     _id,
+    cartTotal,
+    itemCount,
     orderedBy,
     products,
     items,
@@ -50,6 +52,7 @@ exports.deleteItemFromCart = asyncWrapper(async (req, res, next) => {
   if (getIndex > -1) {
     let product = cart.items[getIndex];
     cart.cartTotal -= product.quantity * product.price;
+    cart.itemCount = cart.items.length - 1;
     cart.items.splice(getIndex, 1);
     await cart.save();
   } else {
@@ -84,6 +87,8 @@ exports.addToCart = asyncWrapper(async (req, res, next) => {
     }
 
     cart.cartTotal += price * (quantity || 1);
+    cart.itemCount = cart.items.length;
+
     cart = await cart.save();
     res.status(201).json({ status: 'Product Added to Cart', quantity });
   } else {
