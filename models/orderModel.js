@@ -1,21 +1,27 @@
 const mongoose = require('mongoose');
-
 const orderSchema = new mongoose.Schema({
-  // cart: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Cart',
-  //     required: [true, 'There is no product in your Cart'],
-  //   },
-  // ],
+  cart: {
+    type: Object,
+    required: true,
+  },
 
-  shippingAddress1: {
+  shippingAddress: {
     type: String,
   },
 
-  // shippingAddress2: {
-  //   type: String,
-  // },
+  paymentId: {
+    type: String,
+    required: true,
+  },
+  orderedBy: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
 
   state: {
     type: String,
@@ -24,10 +30,6 @@ const orderSchema = new mongoose.Schema({
   city: {
     type: String,
   },
-
-  // zip: {
-  //   type: String,
-  // },
 
   country: {
     type: String,
@@ -42,9 +44,9 @@ const orderSchema = new mongoose.Schema({
     default: 'Pending',
   },
 
-  // totalPrice: {
-  //   type: Number,
-  // },
+  totalAmount: {
+    type: Number,
+  },
 
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +61,11 @@ const orderSchema = new mongoose.Schema({
 orderSchema.virtual('id', function () {
   return this._id.toHexString();
 });
+
+// orderSchema.pre('save', async function (req, res, next) {
+//   this.cart = await Cart.find();
+//   next();
+// });
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;

@@ -54,6 +54,7 @@ exports.cancelOrder = asyncWrapper(async (req, res, next) => {
 
 exports.checkoutSession = asyncWrapper(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
+  if (!req.body.email) req.body.email = req.user.email;
   const cart = await Cart.findOne({ orderedBy: req.user.id });
   const session = await stripeAPI.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -72,7 +73,7 @@ exports.checkoutSession = asyncWrapper(async (req, res, next) => {
         ],
         amount: cart.cartTotal * 100,
         currency: 'usd',
-        quantity: cart.itemCount,
+        quantity: 1,
         price: cart.price,
       },
     ],
@@ -80,12 +81,16 @@ exports.checkoutSession = asyncWrapper(async (req, res, next) => {
 
   if (session) {
     const newOrder = await Order.create({
-      // cart: req.body.cart,
-      shippingAddress1: req.body.shippingAddress1,
+      cart,
+      email: req.body.email,
+      orderedBy: `${req.user.firstName} ${req.user.lastName} `,
+      shippingAddress1: req.body.shippingAddress,
       state: req.body.state,
       zip: req.body.zip,
       country: req.body.country,
       phoneNumber: req.body.phone,
+      paymentId: session.id,
+      totalAmount: session.amount_total,
     });
     res.status(200).json({
       sessionId: session.id,
