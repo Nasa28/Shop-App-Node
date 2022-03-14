@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
+
 const orderSchema = new mongoose.Schema({
   cart: {
     type: Object,
-    required: true,
+    required: [true, 'An order must have a cart'],
   },
 
   shippingAddress: {
     type: String,
+    required: [true, 'Your address is needed to complete the order'],
   },
 
   paymentId: {
@@ -25,17 +27,21 @@ const orderSchema = new mongoose.Schema({
 
   state: {
     type: String,
+    required: [true, 'Your State is needed to complete the order'],
   },
 
   city: {
     type: String,
+    required: [true, 'Your City is needed to complete the order'],
   },
 
   country: {
     type: String,
+    required: [true, 'Your Country is needed to complete the order'],
   },
   phone: {
     type: String,
+    required: [true, 'Your Phone number is needed to complete the order'],
   },
 
   status: {
@@ -62,10 +68,6 @@ orderSchema.virtual('id', function () {
   return this._id.toHexString();
 });
 
-// orderSchema.pre('save', async function (req, res, next) {
-//   this.cart = await Cart.find();
-//   next();
-// });
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;
