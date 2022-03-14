@@ -21,18 +21,21 @@ exports.allProducts = asyncWrapper(async (req, res, next) => {
 
 exports.createProduct = asyncWrapper(async (req, res, next) => {
   const uploader = async (path) => await cloudinary.uploads(path, 'Images');
-  if (!req.files) {
+  const files = await req.files;
+  if (!files) {
     throw new ErrorMsg('You must upload a minimum of one image');
   }
 
   const urls = [];
-  const files = req.files;
-  for (const file of files) {
+  const imageList = files.map(async (file) => {
     const { path } = file;
     const newPath = await uploader(path);
     urls.push(newPath.url);
     fs.unlinkSync(path);
-  }
+  });
+
+  await Promise.all(imageList);
+
   req.body.images = urls;
   if (!req.body.dealer) req.body.dealer = req.user.id;
 
@@ -67,12 +70,12 @@ exports.updateProduct = asyncWrapper(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   if (!product) {
     return next(
-      new ErrorMsg(`You are not authorized to perform this action`, 404),
+      new ErrorMsg(`You are not authorized to perform this action`, 404)
     );
   }
   res.status(200).json({
@@ -89,7 +92,7 @@ exports.deleteProduct = asyncWrapper(async (req, res, next) => {
   });
   if (!product) {
     return next(
-      new ErrorMsg(`You are not authorized to perform this action`, 404),
+      new ErrorMsg(`You are not authorized to perform this action`, 404)
     );
   }
   res.status(201).json({
