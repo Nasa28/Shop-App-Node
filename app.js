@@ -43,9 +43,6 @@ app.use(xss());
 
 // Prevent Parameter pollution
 
-
-
-
 app.use(cors());
 
 app.use('/api/v1/products', productRoutes);
