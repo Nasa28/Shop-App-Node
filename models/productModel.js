@@ -108,7 +108,7 @@ const productSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 productSchema.virtual('id', function () {
@@ -117,8 +117,8 @@ productSchema.virtual('id', function () {
 
 productSchema.pre('save', function (next) {
   this.slug = slugify(
-    this.name + '-' + (Math.random() + 1).toString(36).substring(2),
-    { lower: true },
+    `${this.title}-${(Math.random() + 1).toString(36).substring(2)}`,
+    { lower: true }
   );
   next();
 });
