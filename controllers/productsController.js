@@ -8,7 +8,7 @@ const cloudinary = require('../utils/cloud');
 exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = asyncWrapper(async (req, res, next) => {
-  const products = await Product.find();
+  const products = await Product.find().sort('-createdAt');
 
   res.status(200).json({
     count: products.length,

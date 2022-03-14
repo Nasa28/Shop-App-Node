@@ -130,7 +130,7 @@ cookieOptions = {
   httpOnly: true,
 };
 
-userSchema.methods.sendTokens = function (user, res, statusCode) {
+userSchema.methods.createToken = function (user, res, statusCode) {
   const token = signToken(this._id);
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);

@@ -12,5 +12,5 @@ router
   // .post(protectRoutes, checkoutSession)
   .delete(protectRoutes, cancelOrder);
 
-router.get('/create-checkout-session/',protectRoutes, checkoutSession);
+router.post('/create-checkout-session/',protectRoutes, checkoutSession);
 module.exports = router;

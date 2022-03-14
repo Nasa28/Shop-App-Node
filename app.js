@@ -4,7 +4,6 @@ const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
-const hpp = require('hpp');
 
 const app = express();
 const morgan = require('morgan');
@@ -44,18 +43,7 @@ app.use(xss());
 
 // Prevent Parameter pollution
 
-app.use(
-  hpp({
-    whitelist: [
-      'duration',
-      'ratingsQuantity',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-      'ratingsAverage',
-    ],
-  }),
-);
+
 
 
 app.use(cors());

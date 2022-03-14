@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const { promisify } = require('util');
 const User = require('../models/userModel');
@@ -20,7 +21,11 @@ exports.signUp = asyncWrapper(async (req, res, next) => {
 
   await new Email(newUser, url).sendWelcome();
   newUser.active = undefined;
-  newUser.sendTokens(newUser, res, 201);
+  newUser.createToken(
+    { name: `${newUser.firstName} ${newUser.lastName}` },
+    res,
+    201,
+  );
 });
 
 exports.login = asyncWrapper(async (req, res) => {
@@ -35,7 +40,7 @@ exports.login = asyncWrapper(async (req, res) => {
     throw new ErrorMsg('Invalid Email or Password', 401);
   }
 
-  user.sendTokens(user, res, 201);
+  user.createToken(user, res, 201);
 });
 
 exports.protectRoutes = asyncWrapper(async (req, res, next) => {
@@ -55,17 +60,17 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
     );
   }
   // 2) Verify Token
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const payload = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if user still exist
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(payload.id);
   if (!currentUser) {
     throw new ErrorMsg('You are not logged in.Please,log in.', 401);
   }
   // 4) Check if user changed password after Token was generated
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(payload.iat)) {
     throw new ErrorMsg(
-      'User recently changed password! Please log in again.',
+      'You recently changed your password! Please log in again.',
       401,
     );
   }
@@ -93,7 +98,7 @@ exports.forgotPassword = asyncWrapper(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    throw new ErrorMsg('There is no user with the email address', 404);
+    throw new ErrorMsg('There is no user with this email address', 404);
   }
   // 2)  Generate a random reset token
 
@@ -153,12 +158,11 @@ exports.resetPassword = asyncWrapper(async (req, res, next) => {
   const url = `${req.protocol}://${req.get('host')}/api/v1/products`;
 
   // 4) Log the user in
-  user.sendTokens(user, res, 200);
+  user.createToken(user, res, 200);
   await new Email(user, url).sendPasswordResetSuccess();
 });
 
 exports.updatePassword = asyncWrapper(async (req, res, next) => {
-  // 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');
 
   // 2) Check if POSTED current password is correct
@@ -173,5 +177,5 @@ exports.updatePassword = asyncWrapper(async (req, res, next) => {
   // User.findByIdAndUpdate will NOT work as intended!
 
   // 4) Log user in, send JWT
-  user.sendTokens(user, res, 200);
+  user.createToken(user, res, 200);
 });
