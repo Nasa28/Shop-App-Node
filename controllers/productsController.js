@@ -122,14 +122,32 @@ exports.featuredProducts = asyncWrapper(async (req, res, next) => {
   const featured = await Product.find({ isFeatured: true });
   if (!featured) {
     res.status(404).json({
-      status: 'There are no featured product',
+      status: 'There are no featured products',
     });
   }
 
   res.status(200).json({
+    count: featured.length,
     status: 'success',
     data: {
       featured,
+    },
+  });
+});
+
+exports.hotProducts = asyncWrapper(async (req, res, next) => {
+  const hotestProducts = await Product.find().where('sold').gt(10);
+  if (!hotestProducts) {
+    res.status(404).json({
+      status: 'There are no Hot products',
+    });
+  }
+
+  res.status(200).json({
+    count: hotestProducts.length,
+    status: 'success',
+    data: {
+      hotestProducts,
     },
   });
 });

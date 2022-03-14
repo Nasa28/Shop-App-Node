@@ -13,9 +13,11 @@ const {
   deleteProduct,
   getMyProducts,
   featuredProducts,
+  hotProducts,
 } = productsController;
 
 router.get('/featured-products', auth.protectRoutes, featuredProducts);
+router.get('/hot-products', auth.protectRoutes, hotProducts);
 
 router
   .route('/')
