@@ -24,7 +24,7 @@ exports.signUp = asyncWrapper(async (req, res, next) => {
   newUser.createToken(
     { name: `${newUser.firstName} ${newUser.lastName}` },
     res,
-    201,
+    201
   );
 });
 
@@ -56,7 +56,7 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   if (!token) {
     throw new ErrorMsg(
       'You are not logged in. Please, log in to proceed!',
-      401,
+      401
     );
   }
   // 2) Verify Token
@@ -71,7 +71,7 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   if (currentUser.changedPasswordAfter(payload.iat)) {
     throw new ErrorMsg(
       'You recently changed your password! Please log in again.',
-      401,
+      401
     );
   }
 
@@ -80,17 +80,17 @@ exports.protectRoutes = asyncWrapper(async (req, res, next) => {
   next();
 });
 // Middleware for Admin Access
-exports.adminAccess = (...roles) => {
-  return (req, res, next) => {
+exports.adminAccess =
+  (...roles) =>
+  (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       throw new ErrorMsg(
         'You do not have permission to perform this action',
-        403,
+        403
       );
     }
     next();
   };
-};
 
 exports.forgotPassword = asyncWrapper(async (req, res) => {
   // 1) Get user based on the posted email.
@@ -108,7 +108,7 @@ exports.forgotPassword = asyncWrapper(async (req, res) => {
 
   try {
     const resetURL = `${req.protocol}://${req.get(
-      'host',
+      'host'
     )}/api/v1/resetPassword/${resetToken}`;
 
     await new Email(user, resetURL).sendPasswordReset();
@@ -124,7 +124,7 @@ exports.forgotPassword = asyncWrapper(async (req, res) => {
 
     throw new ErrorMsg(
       'There was an error sending the email. Please, try again later',
-      500,
+      500
     );
   }
 });
@@ -152,7 +152,7 @@ exports.resetPassword = asyncWrapper(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   user.role = undefined;
-  passwordChangedAt = undefined;
+  user.passwordChangedAt = undefined;
   await user.save();
   // 3) Update the changedPasswordAt property for the current user
   const url = `${req.protocol}://${req.get('host')}/api/v1/products`;

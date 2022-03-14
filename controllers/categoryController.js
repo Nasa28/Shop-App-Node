@@ -1,7 +1,7 @@
+const slugify = require('slugify');
 const Category = require('../models/categoryModel');
 const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
-const slugify = require('slugify');
 
 exports.listCategories = asyncWrapper(async (req, res, next) => {
   const categories = await Category.find().sort({ createdAt: -1 });
@@ -30,8 +30,9 @@ exports.createCategory = asyncWrapper(async (req, res, next) => {
 exports.updateCategory = asyncWrapper(async (req, res, next) => {
   const { name } = req.body;
   const slug = slugify(
-    name + '-' + (Math.random() + 1).toString(36).substring(2),
+    `${name}-${(Math.random() + 1).toString(36).substring(2)}`
   );
+
   const category = await Category.findOneAndUpdate(
     { slug: req.params.slug },
     {
@@ -41,12 +42,12 @@ exports.updateCategory = asyncWrapper(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   if (!category) {
     return next(
-      new ErrorMsg('The category you are looking for does not exist'),
+      new ErrorMsg('The category you are looking for does not exist')
     );
   }
   res.status(200).json({

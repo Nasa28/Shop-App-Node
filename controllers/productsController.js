@@ -4,12 +4,18 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
 const upload = require('../utils/multer');
 const cloudinary = require('../utils/cloud');
+const AppHelpers = require('../utils/appHelpers');
 
 exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = asyncWrapper(async (req, res, next) => {
-  const products = await Product.find().sort('-createdAt');
+  const helpers = new AppHelpers(Product.find(), req.query)
+    .filter()
+    .sort()
+    .limitField()
+    .paginate();
 
+  const products = await helpers.query;
   res.status(200).json({
     count: products.length,
     status: 'Success',

@@ -27,8 +27,8 @@ exports.updateMe = asyncWrapper(async (req, res, next) => {
     return next(
       new ErrorMsg(
         'This route is not for password update, please use //updatePassword',
-        400,
-      ),
+        400
+      )
     );
   }
   // 2) If not update the user details
@@ -40,7 +40,7 @@ exports.updateMe = asyncWrapper(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   ).select('-__v');
 
   res.status(200).json({

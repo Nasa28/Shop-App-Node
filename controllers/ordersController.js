@@ -3,11 +3,12 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
 const Cart = require('../models/cartModel');
 const stripeAPI = require('../stripe');
+
 exports.getOrders = asyncWrapper(async (req, res, next) => {
   const orders = await Order.find({ user: req.user.id });
 
   res.status(200).json({
-    count: carts.length,
+    count: orders.length,
     status: 'Success',
     data: {
       orders,
