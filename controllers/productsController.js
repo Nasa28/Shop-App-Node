@@ -117,3 +117,19 @@ exports.getMyProducts = asyncWrapper(async (req, res, next) => {
     },
   });
 });
+
+exports.featuredProducts = asyncWrapper(async (req, res, next) => {
+  const featured = await Product.find({ isFeatured: true });
+  if (!featured) {
+    res.status(404).json({
+      status: 'There are no featured product',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      featured,
+    },
+  });
+});

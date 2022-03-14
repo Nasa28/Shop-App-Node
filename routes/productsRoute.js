@@ -1,7 +1,9 @@
 const express = require('express');
+
 const router = express.Router();
 const auth = require('../controllers/authController');
 const productsController = require('../controllers/productsController');
+
 const {
   uploadProductImages,
   allProducts,
@@ -10,7 +12,10 @@ const {
   updateProduct,
   deleteProduct,
   getMyProducts,
+  featuredProducts,
 } = productsController;
+
+router.get('/featured-products', auth.protectRoutes, featuredProducts);
 
 router
   .route('/')
@@ -19,14 +24,14 @@ router
     auth.protectRoutes,
     auth.adminAccess('dealer'),
     uploadProductImages,
-    createProduct,
+    createProduct
   );
 
 router.get(
   '/myProducts',
   auth.protectRoutes,
   auth.adminAccess('dealer'),
-  getMyProducts,
+  getMyProducts
 );
 router
   .route('/:id')
