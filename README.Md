@@ -15,7 +15,7 @@
 
 ## API DOCUMENTATION
 
-### [Frontend Link](https://documenter.getpostman.com/view/18988347/UVsJy8Ck#intro)
+### [Documentation](https://documenter.getpostman.com/view/18988347/UVsJy8Ck#intro)
 
 ## Getting Started
 
