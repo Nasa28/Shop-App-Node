@@ -1,19 +1,20 @@
 const express = require('express');
 const CategoryController = require('../controllers/categoryController');
 const authController = require('../controllers/authController');
-const { protectRoutes } = authController;
+
+const { protectRoutes, adminAccess } = authController;
 const router = express.Router();
 const { createCategory, deleteCategory, listCategories, updateCategory } =
   CategoryController;
 
 router
   .route('/')
-  .get(protectRoutes, listCategories)
-  .post(protectRoutes, createCategory);
+  .get(protectRoutes, adminAccess('dealer'), listCategories)
+  .post(protectRoutes, adminAccess('admin'), createCategory);
 router
   .route('/:slug')
   .get()
-  .patch(protectRoutes, updateCategory)
-  .delete(protectRoutes, deleteCategory);
+  .patch(protectRoutes, adminAccess('admin'), updateCategory)
+  .delete(protectRoutes, adminAccess('admin'), deleteCategory);
 
 module.exports = router;

@@ -11,7 +11,7 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.getUsers = asyncWrapper(async (req, res) => {
-  const users = await User.find().select('firstName lastName email');
+  const users = await User.find().select('firstName lastName email role');
   res.status(200).json({
     count: users.length,
     status: 'success',

@@ -17,7 +17,7 @@ const {
 } = productsController;
 
 router.get('/featured-products', auth.protectRoutes, featuredProducts);
-router.get('/hot-products', auth.protectRoutes, hotProducts);
+router.get('/hot-products', hotProducts);
 
 router
   .route('/')
