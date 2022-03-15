@@ -1,6 +1,7 @@
 # SHOP API(E-COMMERCE APP)
 
-## The Shop API is an e-commerce application built with express.js, node.js, and Mongodb, for online product sales. The app provides to authenticated and unauthenticated users with a catalog of available products to purchase. Before placing an order, users need to add all the products they want to purchase to a shopping cart. After that, the user can proceed with placing an order which if successfully processed, returns a sessionID to the client. It is worthy to note that each user can have only one cart that becomes empty after placing an order. To create a product, you must have dealer privilege access because only dealers have permission to perform this action.
+## The Shop API is an e-commerce application built with express.js, node.js, and MongoDB, for online product sales. The app provides authenticated and unauthenticated users with a catalog of available products to purchase. Before placing an order, users need to add all the products they want to purchase to a shopping cart. After that, the user can proceed with placing an order which if successfully processed, returns a session id to the client. It is worthy to note that each user can have only one cart that becomes empty after placing an order. To create a product, you must have dealer privilege access because only dealers have permission to perform this action.
+
 
 ## Built With
 
