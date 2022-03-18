@@ -24,7 +24,7 @@ router
   .get(allProducts)
   .post(
     auth.protectRoutes,
-    auth.adminAccess('dealer'),
+    auth.adminAccess('admin', 'dealer'),
     uploadProductImages,
     createProduct
   );

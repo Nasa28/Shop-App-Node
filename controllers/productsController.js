@@ -9,7 +9,7 @@ const AppHelpers = require('../utils/appHelpers');
 exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = asyncWrapper(async (req, res, next) => {
-  const helpers = new AppHelpers(Product.find(), req.query)
+  const helpers = new AppHelpers(Product.find({}, { _id: 0 }), req.query)
     .filter()
     .sort()
     .limitField()
@@ -48,6 +48,7 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
   const newProduct = await Product.create(req.body);
 
   newProduct.__v = undefined;
+
   res.status(200).json({
     status: 'Created',
     data: {

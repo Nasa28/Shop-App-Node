@@ -3,6 +3,7 @@ const slugify = require('slugify');
 
 const productSchema = new mongoose.Schema(
   {
+    id: mongoose.Schema.ObjectId,
     slug: {
       type: String,
       unique: true,
@@ -111,8 +112,8 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-productSchema.virtual('id', function () {
-  return this._id.toHexString();
+productSchema.set('toJSON', {
+  virtuals: true,
 });
 
 productSchema.pre('save', function (next) {
@@ -120,14 +121,12 @@ productSchema.pre('save', function (next) {
     `${this.title}-${(Math.random() + 1).toString(36).substring(2)}`,
     { lower: true }
   );
+
   next();
 });
 
 // productSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'dealer',
-//     select: '-__v -passwordChangedAt -role',
-//   });
+//   this.id = this._id;
 //   next();
 // });
 const Product = mongoose.model('Product', productSchema);
