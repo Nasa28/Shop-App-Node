@@ -9,7 +9,7 @@ const AppHelpers = require('../utils/appHelpers');
 exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = asyncWrapper(async (req, res, next) => {
-  const helpers = new AppHelpers(Product.find({}, { _id: 0 }), req.query)
+  const helpers = new AppHelpers(Product.find({}), req.query)
     .filter()
     .sort()
     .limitField()
@@ -50,15 +50,18 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
   newProduct.__v = undefined;
 
   res.status(200).json({
-    status: 'Created',
-    data: {
-      product: newProduct,
-    },
+    status: 'Product created',
+    // data: {
+    //   product: newProduct,
+    // },
   });
 });
 
 exports.getProduct = asyncWrapper(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findOne(
+    { slug: req.params.slug },
+    { _id: 0, __v: 0 }
+  );
   if (!product) {
     throw new ErrorMsg(`No product found with id ${req.params.id}`, 404);
   }

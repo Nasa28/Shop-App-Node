@@ -43,7 +43,7 @@ const cartSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 cartSchema.pre(/^find/, function (next) {

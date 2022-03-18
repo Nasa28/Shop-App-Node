@@ -12,6 +12,7 @@ exports.getCartItems = asyncWrapper(async (req, res, next) => {
     });
   }
   const { _id, orderedBy, products, items, cartTotal, itemCount } = cart;
+
   res.status(200).json({
     count: cart.items.length,
     status: 'Success',
@@ -38,6 +39,8 @@ exports.emptyCart = asyncWrapper(async (req, res, next) => {
     );
   }
   cart.items.splice(0, cart.items.length);
+  cart.cartTotal = 0;
+  cart.itemCount = 0;
   await cart.save();
   res.status(204).json({
     status: 'Cart Emptied',
