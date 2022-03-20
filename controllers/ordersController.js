@@ -57,6 +57,10 @@ exports.checkoutSession = asyncWrapper(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
   if (!req.body.email) req.body.email = req.user.email;
   const cart = await Cart.findOne({ orderedBy: req.user.id });
+
+  if (cart.itemCount === 0) {
+    throw new ErrorMsg('Your cart is Empty, add products to your cart');
+  }
   const session = await stripeAPI.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
@@ -85,13 +89,13 @@ exports.checkoutSession = asyncWrapper(async (req, res, next) => {
       cart,
       email: req.body.email,
       orderedBy: `${req.user.firstName} ${req.user.lastName} `,
-      shippingAddress1: req.body.shippingAddress,
+      shippingAddress: req.body.shippingAddress,
       state: req.body.state,
       zip: req.body.zip,
       country: req.body.country,
-      phoneNumber: req.body.phone,
+      phoneNumber: req.body.phoneNumber,
       paymentId: session.id,
-      totalAmount: session.amount_total,
+      totalAmount: session.amount_total / 100,
     });
     res.status(200).json({
       sessionId: session.id,

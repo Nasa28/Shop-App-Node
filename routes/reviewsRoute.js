@@ -10,7 +10,7 @@ router
   .post(
     authController.protectRoutes,
     authController.adminAccess('user'),
-    reviewsController.createReview,
+    reviewsController.createReview
   );
 
 module.exports = router;

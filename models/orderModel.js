@@ -27,19 +27,19 @@ const orderSchema = new mongoose.Schema({
 
   state: {
     type: String,
-    required: [true, 'Your State is needed to complete the order'],
+    // required: [true, 'Your State is needed to complete the order'],
   },
 
   city: {
     type: String,
-    required: [true, 'Your City is needed to complete the order'],
+    // required: [true, 'Your City is needed to complete the order'],
   },
 
   country: {
     type: String,
-    required: [true, 'Your Country is needed to complete the order'],
+    // required: [true, 'Your Country is needed to complete the order'],
   },
-  phone: {
+  phoneNumber: {
     type: String,
     required: [true, 'Your Phone number is needed to complete the order'],
   },

@@ -36,7 +36,7 @@ router.get(
   getMyProducts
 );
 router
-  .route('/:slug')
+  .route('/:id')
   .get(getProduct)
   .patch(auth.protectRoutes, auth.adminAccess('dealer'), updateProduct)
   .delete(auth.protectRoutes, auth.adminAccess('dealer'), deleteProduct);

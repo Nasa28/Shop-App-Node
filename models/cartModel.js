@@ -53,6 +53,14 @@ cartSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
+cartSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'orderedBy',
+    select: 'firstName lastName',
+  });
+  next();
+});
 const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;

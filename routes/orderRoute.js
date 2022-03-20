@@ -1,6 +1,7 @@
 const express = require('express');
 const ordersController = require('../controllers/ordersController');
 const authController = require('../controllers/authController');
+
 const { protectRoutes } = authController;
 const router = express.Router();
 
@@ -12,5 +13,5 @@ router
   // .post(protectRoutes, checkoutSession)
   .delete(protectRoutes, cancelOrder);
 
-router.post('/create-checkout-session/',protectRoutes, checkoutSession);
+router.post('/create-checkout-session/', protectRoutes, checkoutSession);
 module.exports = router;
