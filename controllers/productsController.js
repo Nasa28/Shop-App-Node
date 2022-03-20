@@ -19,9 +19,7 @@ exports.allProducts = asyncWrapper(async (req, res, next) => {
   res.status(200).json({
     count: products.length,
     status: 'Success',
-    data: {
-      products,
-    },
+    products,
   });
 });
 
@@ -58,10 +56,7 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
 });
 
 exports.getProduct = asyncWrapper(async (req, res) => {
-  const product = await Product.findOne(
-    { slug: req.params.slug },
-    { _id: 0, __v: 0 }
-  );
+  const product = await Product.findById(req.params.id, { _id: 0, __v: 0 });
   if (!product) {
     throw new ErrorMsg(`No product found with id ${req.params.id}`, 404);
   }

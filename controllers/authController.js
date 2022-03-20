@@ -7,7 +7,7 @@ const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
 const Email = require('../utils/email');
 
-exports.signUp = asyncWrapper(async (req, res, next) => {
+exports.register = asyncWrapper(async (req, res, next) => {
   const newUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -28,7 +28,7 @@ exports.signUp = asyncWrapper(async (req, res, next) => {
   );
 });
 
-exports.login = asyncWrapper(async (req, res) => {
+exports.login = asyncWrapper(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new ErrorMsg('Please enter your email and password', 400);
@@ -37,7 +37,7 @@ exports.login = asyncWrapper(async (req, res) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    throw new ErrorMsg('Invalid Email or Password', 401);
+    return next(new ErrorMsg('Invalid Email or Password', 401));
   }
 
   user.createToken(user, res, 201);

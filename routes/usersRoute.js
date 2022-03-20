@@ -7,7 +7,7 @@ const { getUser, getUsers, updateUser, deleteUser, deleteMe, updateMe } =
   userController;
 
 const {
-  signUp,
+  register,
   login,
   forgotPassword,
   resetPassword,
@@ -18,7 +18,7 @@ const {
 
 const router = express.Router();
 
-router.post('/signUp', signUp);
+router.post('/register', register);
 router.post('/login', login);
 
 router.post('/forgotPassword', forgotPassword);

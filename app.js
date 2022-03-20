@@ -2,7 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 
 const app = express();
@@ -17,6 +17,8 @@ const reviewRoutes = require('./routes/reviewsRoute');
 const ErrorMsg = require('./utils/ErrorMsg');
 const globalErrorHandler = require('./controllers/errorController');
 
+app.use(cors());
+
 // Set security HTTP headers using helmet package
 app.use(helmet());
 
@@ -28,13 +30,13 @@ if (process.env.NODE_ENV === 'development') {
 
 // LIMIT TOO MANY REQUESTS FROM THE SAME IP ADDRESS
 
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many request from this IP, please try again in an hour!',
-});
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'Too many request from this IP, please try again in an hour!',
+// });
 
-app.use('/api', limiter);
+// app.use('/api', limiter);
 
 // Data sanitization against NOSQL injections
 app.use(mongoSanitize());
@@ -42,8 +44,6 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent Parameter pollution
-
-app.use(cors());
 
 app.use('/api/v1/products', productRoutes);
 
