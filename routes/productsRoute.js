@@ -32,7 +32,7 @@ router
 router.get(
   '/myProducts',
   auth.protectRoutes,
-  auth.adminAccess('dealer'),
+  auth.adminAccess('dealer', 'admin'),
   getMyProducts
 );
 router
