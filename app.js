@@ -22,7 +22,7 @@ app.use(cors());
 // Set security HTTP headers using helmet package
 app.use(helmet());
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
