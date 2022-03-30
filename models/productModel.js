@@ -28,24 +28,24 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product must have a description'],
   },
 
-  productCategory: {
-    type: String,
-    enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
-    // required: [true, 'Please, select a category'],
-  },
+  // productCategory: {
+  //   type: String,
+  //   enum: ['computing', 'electronic', 'fashion', 'gaming', 'automobile'],
+  //   // required: [true, 'Please, select a category'],
+  // },
 
   // subCategory: {
   //   type: String,
   //   required: [true, 'SubCategory should not be blank'],
   // },
-  category: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Category',
-  },
+  // category: {
+  //   type: mongoose.Schema.ObjectId,
+  //   ref: 'Category',
+  // },
 
-  image: {
-    type: String,
-  },
+  // image: {
+  //   type: String,
+  // },
 
   stockBalance: {
     type: Number,
@@ -57,32 +57,32 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  sold: {
-    type: Number,
-    default: 0,
-  },
+  // sold: {
+  //   type: Number,
+  //   default: 0,
+  // },
   images: [String],
 
-  size: {
-    type: String,
-  },
-  shipping: {
-    type: String,
-    enum: ['Yes', 'No'],
-  },
-  color: {
-    type: String,
-    enum: [
-      'Red',
-      'Black',
-      'Brown',
-      'Silver',
-      'Blue',
-      'White',
-      'pink',
-      'orange',
-    ],
-  },
+  // size: {
+  //   type: String,
+  // },
+  // shipping: {
+  //   type: String,
+  //   enum: ['Yes', 'No'],
+  // },
+  // color: {
+  //   type: String,
+  //   enum: [
+  //     'Red',
+  //     'Black',
+  //     'Brown',
+  //     'Silver',
+  //     'Blue',
+  //     'White',
+  //     'pink',
+  //     'orange',
+  //   ],
+  // },
   dealer: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',

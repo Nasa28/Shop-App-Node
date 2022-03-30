@@ -1,11 +1,11 @@
 const express = require('express');
+const upload = require('../utils/multer');
 
 const router = express.Router();
 const auth = require('../controllers/authController');
 const productsController = require('../controllers/productsController');
 
 const {
-  uploadProductImages,
   allProducts,
   createProduct,
   getProduct,
@@ -19,15 +19,13 @@ const {
 router.get('/featured-products', auth.protectRoutes, featuredProducts);
 router.get('/hot-products', hotProducts);
 
-router
-  .route('/')
-  .get(allProducts)
-  .post(
-    auth.protectRoutes,
-    auth.adminAccess('admin', 'dealer'),
-    uploadProductImages,
-    createProduct
-  );
+router.route('/').get(allProducts).post(
+  auth.protectRoutes,
+  auth.adminAccess('admin', 'dealer'),
+
+  upload,
+  createProduct
+);
 
 router.get(
   '/myProducts',

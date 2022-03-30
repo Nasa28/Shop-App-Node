@@ -56,6 +56,7 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+  createdAt: Date.now(),
 });
 
 // HASH OR ENCRYPT PASSWORD MIDDLEWARE

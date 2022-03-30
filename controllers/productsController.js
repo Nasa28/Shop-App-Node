@@ -2,11 +2,8 @@ const fs = require('fs');
 const Product = require('../models/productModel');
 const asyncWrapper = require('../utils/asyncWrapper');
 const ErrorMsg = require('../utils/ErrorMsg');
-const upload = require('../utils/multer');
 const cloudinary = require('../utils/cloud');
 const AppHelpers = require('../utils/appHelpers');
-
-exports.uploadProductImages = upload.array('images', 3);
 
 exports.allProducts = asyncWrapper(async (req, res, next) => {
   const helpers = new AppHelpers(Product.find({}), req.query)
@@ -44,7 +41,7 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
   if (!req.body.dealer) req.body.dealer = req.user.id;
 
   const newProduct = await Product.create(req.body);
-
+  console.log(newProduct);
   newProduct.__v = undefined;
 
   res.status(200).json({
@@ -56,7 +53,10 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
 });
 
 exports.getProduct = asyncWrapper(async (req, res) => {
-  const product = await Product.findById(req.params.id, { _id: 0, __v: 0 });
+  const product = await Product.findOne(
+    { slug: req.params.slug },
+    { _id: 0, __v: 0 }
+  );
   if (!product) {
     throw new ErrorMsg(`No product found with id ${req.params.id}`, 404);
   }

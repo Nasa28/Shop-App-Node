@@ -3,7 +3,7 @@ const ErrorMsg = require('./ErrorMsg');
 
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + '-' + file.originalname.split('.')[0]);
+    cb(null, `${new Date().toISOString()}-${file.originalname.split('.')[0]}`);
   },
 });
 
@@ -19,6 +19,6 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 },
   fileFilter: multerFilter,
-});
+}).array('images', 3);
 
 module.exports = upload;
