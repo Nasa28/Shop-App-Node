@@ -41,7 +41,6 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
   if (!req.body.dealer) req.body.dealer = req.user.id;
 
   const newProduct = await Product.create(req.body);
-  console.log(newProduct);
   newProduct.__v = undefined;
 
   res.status(200).json({
@@ -53,12 +52,9 @@ exports.createProduct = asyncWrapper(async (req, res, next) => {
 });
 
 exports.getProduct = asyncWrapper(async (req, res) => {
-  const product = await Product.findOne(
-    { slug: req.params.slug },
-    { _id: 0, __v: 0 }
-  );
+  const product = await Product.findOne({ slug: req.params.slug });
   if (!product) {
-    throw new ErrorMsg(`No product found with id ${req.params.id}`, 404);
+    throw new ErrorMsg(`No product found with slug ${req.params.slug}`, 404);
   }
   res.status(200).json({
     status: 'Success',
